@@ -3,6 +3,7 @@ import os
 from flask import Flask, jsonify, Response
 from flask_cors import CORS
 from flask_migrate import Migrate
+from whitebearbake.database.models import *
 
 
 
@@ -44,6 +45,7 @@ def create_app(cfg=None):
 
     from whitebearbake.database import db
     # attach app to migrate object
+    db.init_app(app)
     migrate.init_app(app, db)
 
     app.app_context().push()
