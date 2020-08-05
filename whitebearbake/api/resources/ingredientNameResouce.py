@@ -4,29 +4,32 @@ from whitebearbake.api.schemas.schemas import IngredientSchema
 from whitebearbake.database import db
 from whitebearbake.database.models import IngredientName
 from whitebearbake.api.apierror import ApiError
+from whitebearbake.api.resources.restive import Restive
+
+apiHandle = Restive(IngredientName,IngredientSchema)
 
 
 class IngredientNameResouce(Resource):
     
     def get(self):
-        # return {"status":'ok'}
-        raise ValueError("test exception")
+        filters = request.args
+        objs = apiHandle.get_many(**filters)
+
+        return apiHandle.dump(objs,many=True), 200
     
     def post(self):
         json_data = request.get_json()
         if not json_data:
             return jsonify({"status":"fail", "messagge":"recive empty body"}),400
 
-        load_data = IngredientSchema().load(json_data)
+        load_data = apiHandle.load(json_data)
         current_app.logger.info(f"data to post:{load_data}")
-        isExist = IngredientName.query.filter_by(name=load_data["name"]).first()
-        IngredientName.query.filter_by(name="milk").first()
+        isExist = apiHandle.get(load_data["name"])
         if isExist:
             return abort(400,"IngredientName:{} already exist".format(load_data["name"]))
-        ingrd_name = IngredientName(**load_data)
-        db.session.add(ingrd_name)
-        db.session.commit()
-        ingrd_name_data = IngredientSchema().dump(ingrd_name)
+        apiHandle.post(load_data)   
+        obj = IngredientName(**load_data)
+        ingrd_name_data = apiHandle.dump(obj)
         current_app.logger.info(f"load_data:{ingrd_name_data}")
         return {
             "status":"ok",
