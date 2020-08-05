@@ -44,8 +44,10 @@ def create_app(cfg=None):
     app.register_blueprint(ui, url_prefix='/')
 
     from whitebearbake.database import db
+    from whitebearbake.api.schemas import ma
     # attach app to migrate object
     db.init_app(app)
+    ma.init_app(app)
     migrate.init_app(app, db)
 
     app.app_context().push()
