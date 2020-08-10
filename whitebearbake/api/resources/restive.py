@@ -44,9 +44,13 @@ class Restive():
 
         return data
 
-    def get(self, id):
+    def get(self, **kwargs):
         """ Get record for a given resource """
-        obj = self._resource.get(id)
+        try:
+            obj = self._resource.query.filter_by(**kwargs).first()
+        except ValueError as err:
+            current_app.logger.error(err)
+            abort(400, err.args)
         return obj
 
     def get_many(self, **kwargs):
@@ -70,16 +74,26 @@ class Restive():
                 if attempt == attempts-1:
                     abort(409, ['A conflict happened while processing the request.', err.orig.__str__().strip()])
                 continue
+    def patch(self, obj, data):
+        try:
+            for key, value in data.items():
+                setattr(obj,key, value)
+            db.session.add(obj)
+            db.session.commit()
+            return obj
+        except ValueError as err:
+            current_app.logger.error(err)
+            abort(400, err.args)
+        return obj
 
-    def delete(self, id, attempts=1):
+    def delete(self, obj, attempts=1):
         """ Deletes an existing record """
-        obj = self._resource.get(id) or abort(404)
-        if not obj:
-            return False
+        # Delete object
         for attempt in range(attempts):
             try:
-                obj.delete()
-                return True
+                db.session.delete(obj)
+                db.session.commit()
+                return {'message': 'No data', 'status_code': 200, 'status': 'success', 'data': 'Entity deleted successfully'}
             except sqlalchemy.exc.IntegrityError as err:
                 if attempt == attempts-1:
                     abort(409, ['A conflict happened while processing the request.', err.orig.__str__().strip()])
