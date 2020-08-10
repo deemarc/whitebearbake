@@ -24,7 +24,7 @@ class IngredientNameResouce(Resource):
 
         load_data = apiHandle.load(json_data)
         current_app.logger.info(f"data to post:{load_data}")
-        isExist = apiHandle.get(load_data["name"])
+        isExist = apiHandle.get(name=load_data["name"])
         if isExist:
             return abort(400,"IngredientName:{} already exist".format(load_data["name"]))
         apiHandle.post(load_data)   
@@ -36,14 +36,25 @@ class IngredientNameResouce(Resource):
             "message":"added successfully",
             "data":ingrd_name_data
         }
-
-
-
-        
-
         
 
 # for query single item using ingredient name
 class IngredientNameSingle(Resource):
     def get(self,name):
-        return {"status":"ok"}
+        obj = apiHandle.get(name=name) or abort(404,f"item with the name:{name}, doesn't exist")
+
+        return apiHandle.dump(obj,many=False), 200 
+
+    def patch(self,name):
+        json_data = request.get_json()
+        if not json_data:
+            return jsonify({"status":"fail", "messagge":"recive empty body"}),400
+        patch_data = apiHandle.load(json_data,partial=True)
+        obj = apiHandle.get(name=name) or abort(404,f"item with the name:{name}, doesn't exist")
+        obj = apiHandle.patch(obj,patch_data)
+        return apiHandle.dump(obj,many=False), 200 
+
+    def delete(self,o):
+        obj = apiHandle.get(name=name) or abort(404,f"item with the name:{name}, doesn't exist")
+        return apiHandle.delete(obj), 200
+
