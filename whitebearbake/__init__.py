@@ -13,18 +13,13 @@ class Config(object):
 
     # Connect to the database
     FLASK_ENV = os.environ.get('FLASK_ENV', 'development')
-    if FLASK_ENV ==  'development':
-        SQLALCHEMY_DATABASE_URI = 'postgresql://capstone_usr:mypass@localhost:5432/capstone_dev'
-        DEBUG = True
-    else:
-        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', None)
-        DEBUG = False
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI',
+    'postgresql://capstone_usr:mypass@localhost:5432/capstone_dev')
+
 
 def create_app(cfg=None):
     """ Define the app object and instantiate context """
     # Instantiate app object
-    template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../templates')
-    static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../static')
     # app = Flask(__name__,static_folder=static_dir, template_folder=template_dir, static_url_path='')
     app = Flask(__name__)
     app.config.from_object(Config())
