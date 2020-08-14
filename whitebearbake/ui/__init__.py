@@ -7,3 +7,8 @@ bp = Blueprint('ui', __name__)
 def index():
     """ Index view """
     return render_template('index.html')
+
+@bp.route('/doc', methods=['GET'])
+def swagger_doc():
+    """ Index view """
+    return render_template('doc.html')
