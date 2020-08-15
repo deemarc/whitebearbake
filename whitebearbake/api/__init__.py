@@ -19,27 +19,6 @@ bp = Blueprint('api', __name__)
 
 # api.add_resource(IngredientNameSingle,'/ingredientNames/<name>')
 
-@bp.route('/swagger.json', methods=['GET'])
-def swagger():
-    """ Returns swagger spec JSON """
-    # Create an APISpec
-    spec = APISpec(title='Spec', version='1.0', openapi_version='3.0.2', plugins=[RestfulPlugin(),MarshmallowPlugin()])
-    
-    # spec = APISpec(
-    #     title='Flasger Petstore',
-    #     version='1.0.10',
-    #     openapi_version='2.0',
-    #     plugins=[
-    #         RestfulPlugin(),
-    #         MarshmallowPlugin()
-    #     ],
-    # )
-    spec.components.schema('ingredientName', schema=IngredienNameSchema)
-    spec.path(resource=IngredientNameResouce, path='/ingredientNames')
-    # spec.path(resource=IngredientNameSingle, path='/ingredientNames/<name>')
-
-    # Return formatted spec
-    return spec.to_dict()
 
 def test_engine(engine):
     """ Tests SQLAlchemy engine and returns response time """
