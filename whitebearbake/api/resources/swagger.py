@@ -8,9 +8,10 @@ from flask import current_app
 # App imports
 from whitebearbake.api import bp
 from whitebearbake.config import config
-from whitebearbake.api.resources.ingredientNameResouce import *
-from whitebearbake.api.schemas.schemas import IngredienNameSchema
 
+
+from whitebearbake.api.resources.ingredientNameResouce import *
+from whitebearbake.api.schemas import IngredienNameSchema, IngredienNameSchemaPOST, jSendIngredientNameSchema, jSendIngredientNamesSchema
 
 @bp.route('/swagger.json', methods=['GET'])
 def swagger():
@@ -28,7 +29,11 @@ def swagger():
     spec.path(view=get_ingredient_name_resource)
     spec.path(view=post_ingredient_name_resource)
 
+    
     # add definition
     spec.components.schema("IngredienName", schema=IngredienNameSchema)
+    spec.components.schema("IngredienNamePOST", schema=IngredienNameSchemaPOST)
+    spec.components.schema("jSendIngredientName", schema=jSendIngredientNameSchema)
+    spec.components.schema("jSendIngredientNames", schema=jSendIngredientNamesSchema)
 
     return spec.to_dict()

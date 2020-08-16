@@ -4,16 +4,20 @@ from flask_restful import Resource
 from flask_apispec import use_kwargs, marshal_with
 from flask_apispec.views import MethodResource
 
-from whitebearbake.api.schemas.schemas import IngredienNameSchema
+from whitebearbake.api.schemas import IngredienNameSchema, IngredienNameSchemaPOST
 from whitebearbake.database import db
 from whitebearbake.database.models import IngredientName
 from whitebearbake.api.apierror import ApiError
-from whitebearbake.api.resources.restive import Restive
+# from whitebearbake.api.resources.restive import Restive
+from whitebearbake.api.resources.masqlapi import masqlapi
 from whitebearbake.api import bp
+from whitebearbake.api.decorators import jSend
 
-apiHandle = Restive(IngredientName,IngredienNameSchema)
+# apiHandle = Restive(IngredientName,IngredienNameSchema)
+apiHandle = masqlapi(db.session, IngredientName,IngredienNameSchema, IngredienNameSchemaPOST)
 
 @bp.route('/ingredientNames', methods=['GET'])
+@jSend
 def get_ingredient_name_resource():
     """
     Get list of ingredientName that meet with query filter given in paramters
@@ -40,15 +44,20 @@ def get_ingredient_name_resource():
                 content:
                   application/json:
                     schema:
-                      type: array
-                      items:
-                        $ref: "#/components/schemas/IngredientName"
+                      $ref: "#/components/schemas/jSendIngredientNames"
+            400:
+                description: Bad Request
+            429:
+                description: Too Many Requests
+            500:
+                description: Internal Server Error
 
     """
     filters = request.args
     objs = apiHandle.get_many(**filters)
+    return apiHandle.getMethod(objs, many=True)
 
-    return jsonify(apiHandle.dump(objs,many=True)), 200
+    # return jsonify(apiHandle.dump(objs,many=True)), 200
 
 @bp.route('/ingredientNames', methods=['POST'])
 def post_ingredient_name_resource():
@@ -72,23 +81,38 @@ def post_ingredient_name_resource():
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/ingredientName"
+                      $ref: "#/components/schemas/jSendIngredientName"
+            200:
+                description: Item Already exist
+            400:
+                description: Bad Request
+            401:
+                description: Unauthorized
+            403:
+                description: Forbidden
+            409:
+                description: Conflict
+            429:
+                description: Too Many Requests
+            500:
+                description: Internal Server Error
 
     """
-    json_data = request.get_json()
-    if not json_data:
-        return jsonify({"status":"fail", "messagge":"recive empty body"}),400
+    return apiHandle.post()
+    # json_data = request.get_json()
+    # if not json_data:
+    #     return jsonify({"status":"fail", "messagge":"recive empty body"}),400
 
-    load_data = apiHandle.load(json_data)
-    current_app.logger.info(f"data to post:{load_data}")
-    isExist = apiHandle.get(name=load_data["name"])
-    if isExist:
-        return abort(400,"IngredientName:{} already exist".format(load_data["name"]))
-    apiHandle.post(load_data)   
-    obj = IngredientName(**load_data)
-    ingrd_name_data = apiHandle.dump(obj)
-    current_app.logger.info(f"load_data:{ingrd_name_data}")
-    return jsonify(ingrd_name_data), 201
+    # load_data = apiHandle.load(json_data)
+    # current_app.logger.info(f"data to post:{load_data}")
+    # isExist = apiHandle.get(name=load_data["name"])
+    # if isExist:
+    #     return abort(400,"IngredientName:{} already exist".format(load_data["name"]))
+    # apiHandle.post(load_data)   
+    # obj = IngredientName(**load_data)
+    # ingrd_name_data = apiHandle.dump(obj)
+    # current_app.logger.info(f"load_data:{ingrd_name_data}")
+    # return jsonify(ingrd_name_data), 201
     # return {
     #     "status":"ok",
     #     "message":"added successfully",

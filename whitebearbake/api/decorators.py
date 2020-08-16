@@ -8,7 +8,6 @@ import uuid
 from flask import abort, jsonify, make_response, request
 
 
-
 def jSend(fn):
     """ jSend decorator """
     @wraps(fn)
