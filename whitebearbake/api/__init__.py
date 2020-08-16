@@ -5,15 +5,10 @@ import socket
 import os
 import time
 
-
-from apispec import APISpec
-from apispec_flask_restful import RestfulPlugin
-from apispec.ext.marshmallow import MarshmallowPlugin
-from apispec_webframeworks.flask import FlaskPlugin   
-
 from whitebearbake.database import db
 from whitebearbake.api.apierror import ApiError
 from whitebearbake.api.schemas.schemas import *
+from flask_apispec.extension import FlaskApiSpec
 # Instantiate blueprint class
 bp = Blueprint('api', __name__)
 
@@ -106,7 +101,7 @@ def teardown(exception=None):
     if exception:
 
         current_app.logger.error("teardown with error, error message: {0}".format(exception))
-        current_app.error("teardown_request - rolling back active database sessions.")
+        current_app.logger.error("teardown_request - rolling back active database sessions.")
         db.session.rollback()
         
     db.session.close()
@@ -159,7 +154,7 @@ def route404(*args, **kwargs):
     """ Catch all route within blueprint to force use of 404 errorhandler. """
     abort(404)
 
-from . resources import ingredientNameResouce
+from . resources import swagger, ingredientNameResouce
 # Register errorhandler for specific HTTP codes
 for code in (400, 401, 403, 404, 405, 409, 410, 412, 413, 418, 429, 500, 501, 502, 503, 504, 505):
     bp.errorhandler(code)(handle_abort)

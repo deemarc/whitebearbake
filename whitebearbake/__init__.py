@@ -8,6 +8,9 @@ from flask_migrate import Migrate
 from whitebearbake.config import config
 from whitebearbake.database.models import *
 
+from apispec import APISpec
+from apispec.ext.marshmallow import MarshmallowPlugin
+from flask_apispec.extension import FlaskApiSpec
 
 
 migrate = Migrate()
@@ -39,6 +42,7 @@ def create_app(cfg=None):
 
 
     app.logger.debug("SQLALCHEMY_DATABASE_URI:{}".format(app.config['SQLALCHEMY_DATABASE_URI']))
+    
     # Instantiate CORS
     CORS(app)
     # api routes
@@ -52,11 +56,12 @@ def create_app(cfg=None):
 
     from whitebearbake.database import db
     from whitebearbake.api.schemas import ma
+
     # attach app to migrate object
     db.init_app(app)
     ma.init_app(app)
     migrate.init_app(app, db)
-
+    
 
     app.app_context().push()
     
