@@ -28,6 +28,10 @@ def swagger():
     # Add all paths for blueprint to spec
     spec.path(view=get_ingredient_name_resource)
     spec.path(view=post_ingredient_name_resource)
+    spec.path(view=get_single_ingredient_name_resource)
+    spec.path(view=patch_single_ingredient_name_resource)
+    spec.path(view=delete_single_ingredient_name_resource)
+
 
     
     # add definition
