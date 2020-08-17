@@ -7,7 +7,7 @@ SQLALCHEMY_DATABASE_URI = 'postgresql://capstone_usr:mypass@localhost:5432/capst
 # }
 APISPEC = {
   "version":"1.0.0",
-  "openapi_version":"3.0.2",
+  "openapi_version":"3.0.3",
   "title": "WhiteBearBake API",
   "description": "API for dessert recipe",
   "host": "localhost:5000",  # overrides localhost:500

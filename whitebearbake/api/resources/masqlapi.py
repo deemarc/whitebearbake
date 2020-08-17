@@ -71,9 +71,12 @@ class masqlapi():
 
         # Merge and Commit
         try:
+            for key, value in data.items():
+                setattr(obj,key, value)
+            self.session.add(obj)
             self.session.commit()
-            obj = self.roschema.dump(data)
-            return {'message': 'OK - entity updated successfully', 'status_code': 200, 'status': 'success', 'data': obj}
+            data = self.roschema().dump(obj)
+            return {'message': 'OK - entity updated successfully', 'status_code': 200, 'status': 'success', 'data': data}
         except exc.IntegrityError as err:
             self.session.rollback()
             return {'message': 'Conflict', 'status_code': 409, 'status': 'failure', 'data': err.orig.__str__().strip()}

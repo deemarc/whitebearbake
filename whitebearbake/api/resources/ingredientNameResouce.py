@@ -86,18 +86,19 @@ def post_ingredient_name_resource():
                 description: Too Many Requests
             500:
                 description: Internal Server Error
-        parameters:
-          - name: body
-            in: body
-            description: Action payload
-            required: true
-            schema:
-              $ref: "#/components/schemas/IngredienNameRequest"
+        requestBody:
+          description: Action payload
+          required: true
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/IngredienNameRequest"
+              
 
     """
     return apiHandle.post("name")
         
-@bp.route('/ingredientNames/<str:name>', methods=['GET'])
+@bp.route('/ingredientNames/<name>', methods=['GET'])
 def get_single_ingredient_name_resource(name):
     """
     Get specific ingredientName by the name
@@ -107,6 +108,14 @@ def get_single_ingredient_name_resource(name):
         operationId: get_single_ingredient_name
         tags:
          - ingredientName
+        parameters:
+          - name: name
+            in: path
+            description: ingredientName's Name
+            required: true
+            schema:
+              type: string
+            
         responses:
             200:
                 description: ingredientNames to be returned
@@ -125,7 +134,7 @@ def get_single_ingredient_name_resource(name):
     obj = apiHandle.get(name=name) or abort(404)
     return apiHandle.getMethod(obj)
 
-@bp.route('/ingredientNames/<str:name>', methods=['PATCH'])
+@bp.route('/ingredientNames/<name>', methods=['PATCH'])
 def patch_single_ingredient_name_resource(name):
     """
     Modifies specific ingredientName by the name
@@ -135,6 +144,20 @@ def patch_single_ingredient_name_resource(name):
         operationId: patch_single_ingredient_name
         tags:
          - ingredientName
+        parameters:
+          - name: name
+            in: path
+            description: ingredientName's Name
+            required: true
+            schema:
+              type: string
+        requestBody:
+          description: Action payload
+          required: true
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/IngredienNameRequest"
         responses:
             200:
                 description: ingredientNames to be returned
@@ -153,16 +176,23 @@ def patch_single_ingredient_name_resource(name):
     obj = apiHandle.get(name=name) or abort(404)
     return apiHandle.patch(obj)
 
-@bp.route('/ingredientNames/<str:name>', methods=['DELETE'])
+@bp.route('/ingredientNames/<name>', methods=['DELETE'])
 def delete_single_ingredient_name_resource(name):
     """
     delete specific ingredientName by the name
     ---
-    patch:
+    delete:
         description: Delete specific ingredientName
         operationId: delete_single_ingredient_name
         tags:
          - ingredientName
+        parameters:
+          - name: name
+            in: path
+            description: ingredientName's Name
+            required: true
+            schema:
+              type: string
         responses:
             200:
                 description: successfully deleted ingredientNames entity
