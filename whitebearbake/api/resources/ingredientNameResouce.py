@@ -31,10 +31,12 @@ def get_ingredient_name_resource():
           - name: id
             in: query
             required: false
+            description: ingredientName resource identifier
             schema:
               type: int
           - name: name
             in: query
+            description: ingredientName's Name
             required: false
             schema:
               type: string
@@ -69,12 +71,6 @@ def post_ingredient_name_resource():
         operationId: post_ingredient_name
         tags:
          - ingredientName
-        parameters:
-          - name: body
-            in: body
-            required: true
-            schema:
-              $ref: "#/components/schemas/IngredienNameRequest"
         responses:
             201:
                 description: return IngredientName item when it was successfully created
@@ -86,100 +82,100 @@ def post_ingredient_name_resource():
                 description: Item Already exist
             400:
                 description: Bad Request
-            401:
-                description: Unauthorized
-            403:
-                description: Forbidden
-            409:
-                description: Conflict
+            429:
+                description: Too Many Requests
+            500:
+                description: Internal Server Error
+        parameters:
+          - name: body
+            in: body
+            description: Action payload
+            required: true
+            schema:
+              $ref: "#/components/schemas/IngredienNameRequest"
+
+    """
+    return apiHandle.post("name")
+        
+@bp.route('/ingredientNames/<str:name>', methods=['GET'])
+def get_single_ingredient_name_resource(name):
+    """
+    Get specific ingredientName by the name
+    ---
+    get:
+        description: Get specific ingredientName
+        operationId: get_single_ingredient_name
+        tags:
+         - ingredientName
+        responses:
+            200:
+                description: ingredientNames to be returned
+                content:
+                  application/json:
+                    schema:
+                      $ref: "#/components/schemas/jSendIngredientName"
+            400:
+                description: Bad Request
             429:
                 description: Too Many Requests
             500:
                 description: Internal Server Error
 
     """
-    return apiHandle.post("name")
-    # json_data = request.get_json()
-    # if not json_data:
-    #     return jsonify({"status":"fail", "messagge":"recive empty body"}),400
+    obj = apiHandle.get(name=name) or abort(404)
+    return apiHandle.getMethod(obj)
 
-    # load_data = apiHandle.load(json_data)
-    # current_app.logger.info(f"data to post:{load_data}")
-    # isExist = apiHandle.get(name=load_data["name"])
-    # if isExist:
-    #     return abort(400,"IngredientName:{} already exist".format(load_data["name"]))
-    # apiHandle.post(load_data)   
-    # obj = IngredientName(**load_data)
-    # ingrd_name_data = apiHandle.dump(obj)
-    # current_app.logger.info(f"load_data:{ingrd_name_data}")
-    # return jsonify(ingrd_name_data), 201
-    # return {
-    #     "status":"ok",
-    #     "message":"added successfully",
-    #     "data":ingrd_name_data
-    # }
+@bp.route('/ingredientNames/<str:name>', methods=['PATCH'])
+def patch_single_ingredient_name_resource(name):
+    """
+    Modifies specific ingredientName by the name
+    ---
+    patch:
+        description: Modifies specific ingredientName
+        operationId: patch_single_ingredient_name
+        tags:
+         - ingredientName
+        responses:
+            200:
+                description: ingredientNames to be returned
+                content:
+                  application/json:
+                    schema:
+                      $ref: "#/components/schemas/jSendIngredientName"
+            400:
+                description: Bad Request
+            429:
+                description: Too Many Requests
+            500:
+                description: Internal Server Error
 
-    # return objs
-# class IngredientNameResouce(MethodResource):
-    
-#     @marshal_with(IngredienNameSchema(many=True))
-#     def get(self):
-#             """
-#         Get list of ingredientName that meet with query filter given in paramters
-#         ---
-#         tags:
-#         - ingredientName
-#         description: Parameters can be provided in the query to search for ingredient name
-#         operationId: get_ingredient_name
-#         parameters:
-#           - name: id
-#             in: query
-#             required: false
-#             schema:
-#             type: int
-#           - name: name
-#             in: query
-#             required: false
-#             schema:
-#               type: string
+    """
+    obj = apiHandle.get(name=name) or abort(404)
+    return apiHandle.patch(obj)
 
-#         responses:
-#             '200':
-#               description: ingredientNames to be returned
-#               content:
-#                 application/json:
-#                   schema:
-#                     type: array
-#                     items:
-#                       $ref: '#/components/schemas/ingredientName'
-#         """
-#         filters = request.args
-#         objs = apiHandle.get_many(**filters)
+@bp.route('/ingredientNames/<str:name>', methods=['DELETE'])
+def delete_single_ingredient_name_resource(name):
+    """
+    delete specific ingredientName by the name
+    ---
+    patch:
+        description: Delete specific ingredientName
+        operationId: delete_single_ingredient_name
+        tags:
+         - ingredientName
+        responses:
+            200:
+                description: successfully deleted ingredientNames entity
+            400:
+                description: Bad Request
+            429:
+                description: Too Many Requests
+            500:
+                description: Internal Server Error
 
-#         return objs
-
-#     @use_kwargs(IngredienNameSchema)
-#     @marshal_with(IngredienNameSchema, code=201)
-#     def post(self):
-#         json_data = request.get_json()
-#         if not json_data:
-#             return jsonify({"status":"fail", "messagge":"recive empty body"}),400
-
-#         load_data = apiHandle.load(json_data)
-#         current_app.logger.info(f"data to post:{load_data}")
-#         isExist = apiHandle.get(name=load_data["name"])
-#         if isExist:
-#             return abort(400,"IngredientName:{} already exist".format(load_data["name"]))
-#         apiHandle.post(load_data)   
-#         obj = IngredientName(**load_data)
-#         ingrd_name_data = apiHandle.dump(obj)
-#         current_app.logger.info(f"load_data:{ingrd_name_data}")
-#         return {
-#             "status":"ok",
-#             "message":"added successfully",
-#             "data":ingrd_name_data
-#         }
-        
+    """
+    obj = apiHandle.get(name=name) or abort(404)
+    return apiHandle.delete(obj)
 
 # # for query single item using ingredient name
 # class IngredientNameSingle(Resource):
