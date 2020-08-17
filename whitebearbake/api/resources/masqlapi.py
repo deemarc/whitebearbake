@@ -17,7 +17,7 @@ class masqlapi():
     def get(self, **kwargs):
         """ Get record for a given resource """
         try:
-            obj = self._resource.query.filter_by(**kwargs).first()
+            obj = self.resource.query.filter_by(**kwargs).first()
         except ValueError as err:
             current_app.logger.error(err)
             abort(400, err.args)
@@ -26,7 +26,7 @@ class masqlapi():
     def get_many(self, **kwargs):
         """ Gets zero or more records for a given resource """
         try:
-            obj = self._resource.query.filter_by(**kwargs)
+            obj = self.resource.query.filter_by(**kwargs)
         except ValueError as err:
             current_app.logger.error(err)
             abort(400, err.args)
@@ -44,7 +44,7 @@ class masqlapi():
             }
             abort(400, errMsg)
         except :
-            abort(400, "schema dump error with unknown reason")
+            abort(500, "schema dump error with unknown reason")
 
        
         # Return entity
@@ -67,12 +67,12 @@ class masqlapi():
             }
             abort(400, errMsg)
         except :
-            abort(400, "schema load error with unknown reason")
+            abort(500, "schema load error with unknown reason")
 
         # Merge and Commit
         try:
             self.session.commit()
-            obj = self.roschema.dump(data).data
+            obj = self.roschema.dump(data)
             return {'message': 'OK - entity updated successfully', 'status_code': 200, 'status': 'success', 'data': obj}
         except exc.IntegrityError as err:
             self.session.rollback()
@@ -105,24 +105,34 @@ class masqlapi():
             return {'message': 'Bad request', 'status_code': 400, 'status': 'failure', 'data': 'JSON input object is missing or cannot be parsed'}
         # print("json:{0}, type:{1}".format(json,type(json)))
         # Validate and deserialize input
-        data, errors = (self.rwschema).load(json)
-        if errors:
-            return {'message': 'Unprocessable entity', 'status_code': 422, 'status': 'failure', 'data': errors}
+        try:
+            data = self.rwschema().load(json)
+        except ValidationError as error:
+            errMsg = {
+                "errorType":"Schema Load ValidationError",
+                "errMsg":error.messages
+            }
+            abort(400, errMsg)
+        except :
+            abort(500, "schema load error with unknown reason")
+            
         query = {}
         query[uniqueField] = data[uniqueField]
         # Check for existing row based on passed JSON
+        current_app.logger.info(f"query data in post function:{query}")
         existing = self.resource.query.filter_by(**query).first()
 
         if existing:
-            obj=(self.roschema).dump(existing).data
+            obj=self.roschema().dump(existing)
             return {'message': 'OK - entity exists', 'status_code': 200, 'status': 'success', 'data': obj}
 
         # Add and Commit
         try:
-            self.session.add(data)
+            obj = self.resource(**data)
+            self.session.add(obj)
             self.session.commit()
-            obj = self.roschema.dump(data).data
-            return {'message': 'Created - entity created successfully', 'status_code': 201, 'status': 'success', 'data': obj}
+            data = self.roschema().dump(obj)
+            return {'message': 'Created - entity created successfully', 'status_code': 201, 'status': 'success', 'data': data}
         except exc.IntegrityError as err:
             self.session.rollback()
             return {'message': 'Conflict', 'status_code': 409, 'status': 'failure', 'data': err.orig.__str__().strip()}

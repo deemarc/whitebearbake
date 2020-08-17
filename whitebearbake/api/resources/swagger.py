@@ -32,7 +32,7 @@ def swagger():
     
     # add definition
     spec.components.schema("IngredienName", schema=IngredienNameSchema)
-    spec.components.schema("IngredienNamePOST", schema=IngredienNameSchemaPOST)
+    spec.components.schema("IngredienNameRequest", schema=IngredienNameSchemaPOST)
     spec.components.schema("jSendIngredientName", schema=jSendIngredientNameSchema)
     spec.components.schema("jSendIngredientNames", schema=jSendIngredientNamesSchema)
 

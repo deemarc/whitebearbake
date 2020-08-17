@@ -70,11 +70,11 @@ def post_ingredient_name_resource():
         tags:
          - ingredientName
         parameters:
-          - name: name
+          - name: body
             in: body
             required: true
             schema:
-              type: string
+              $ref: "#/components/schemas/IngredienNameRequest"
         responses:
             201:
                 description: return IngredientName item when it was successfully created
@@ -98,7 +98,7 @@ def post_ingredient_name_resource():
                 description: Internal Server Error
 
     """
-    return apiHandle.post()
+    return apiHandle.post("name")
     # json_data = request.get_json()
     # if not json_data:
     #     return jsonify({"status":"fail", "messagge":"recive empty body"}),400

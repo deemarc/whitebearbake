@@ -7,7 +7,7 @@ import time
 
 from whitebearbake.database import db
 from whitebearbake.api.apierror import ApiError
-from whitebearbake.api.schemas.schemas import *
+# from whitebearbake.api.schemas import *
 from flask_apispec.extension import FlaskApiSpec
 # Instantiate blueprint class
 bp = Blueprint('api', __name__)

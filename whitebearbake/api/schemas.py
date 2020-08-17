@@ -61,9 +61,9 @@ class IngredienNameSchemaPOST(ma.SQLAlchemyAutoSchema):
         exclude = ('id',)
 
 class jSendIngredientNameSchema(jSendSchema):
-    data = fields.Nested('InformationSchema', many=False,
+    data = fields.Nested('IngredienNameSchema', many=False,
                              required=True, description='IngredientName object, singular')
 
 class jSendIngredientNamesSchema(jSendSchema):
-    data = fields.Nested('InformationSchema', many=True,
+    data = fields.Nested('IngredienNameSchema', many=True,
                              required=True, description='IngredientName object, Many')
