@@ -42,6 +42,15 @@ class JSONSchema(Schema):
         """ Loads JSON """
         return str(value)
 
+class jSendSchema(ma.Schema):
+    """ jSend wrapper schema """
+    data = fields.Dict(required=True, description='jSend payload')
+    message = fields.Str(required=True, description='jSend message')
+    status = fields.Str(required=True, description='jSend status')
+    status_code = fields.Integer(required=True, description='HTTP status code returned outside of the headers')
+    timestamp = fields.DateTime(required=True, description='Timestamp of the request')
+    uuid = fields.UUID(required=True, description='UUID for the request, used for logging/debugging')
+
 class IngredienNameSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = IngredientName
@@ -51,10 +60,10 @@ class IngredienNameSchemaPOST(ma.SQLAlchemyAutoSchema):
         model = IngredientName
         exclude = ('id',)
 
-class jSendIngredientNameSchema(JSONSchema):
+class jSendIngredientNameSchema(jSendSchema):
     data = fields.Nested('InformationSchema', many=False,
                              required=True, description='IngredientName object, singular')
 
-class jSendIngredientNamesSchema(JSONSchema):
+class jSendIngredientNamesSchema(jSendSchema):
     data = fields.Nested('InformationSchema', many=True,
                              required=True, description='IngredientName object, Many')

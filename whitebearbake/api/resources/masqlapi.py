@@ -97,7 +97,7 @@ class masqlapi():
             raise err
 
 
-    def post(self):
+    def post(self,uniqueField):
         """ POST """
         # Grab request data
         json = request.get_json()
@@ -108,9 +108,10 @@ class masqlapi():
         data, errors = (self.rwschema).load(json)
         if errors:
             return {'message': 'Unprocessable entity', 'status_code': 422, 'status': 'failure', 'data': errors}
-
+        query = {}
+        query[uniqueField] = data[uniqueField]
         # Check for existing row based on passed JSON
-        existing = self.resource.query.filter_by(**uidDict).first()
+        existing = self.resource.query.filter_by(**query).first()
 
         if existing:
             obj=(self.roschema).dump(existing).data
