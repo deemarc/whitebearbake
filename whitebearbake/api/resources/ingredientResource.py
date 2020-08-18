@@ -7,49 +7,49 @@ from flask_apispec.views import MethodResource
 # import inside the package
 from whitebearbake.api import bp
 from whitebearbake.api.resources.masqlapi import masqlapi
-from whitebearbake.api.schemas import IngredientNameSchema, IngredientNameSchemaPOST
+from whitebearbake.api.schemas import IngredientSchema, IngredientSchemaPOST
 from whitebearbake.api.decorators import jSend
 
 from whitebearbake.database import db
-from whitebearbake.database.models import IngredientName
+from whitebearbake.database.models import Ingredient
 
 
 
 
 
-apiHandle = masqlapi(db.session, IngredientName,IngredientNameSchema, IngredientNameSchemaPOST)
+apiHandle = masqlapi(db.session, Ingredient ,IngredientSchema, IngredientSchemaPOST)
 
-@bp.route('/ingredientNames', methods=['GET'])
+@bp.route('/ingredients', methods=['GET'])
 @jSend
-def get_ingredient_name_resource():
+def get_ingredient_resource():
     """
-    Get list of ingredientName that meet with query filter given in paramters
+    Get list of ingredient that meet with query filter given in paramters
     ---
     get:
         description: Parameters can be provided in the query to search for ingredient name
-        operationId: get_ingredient_name
+        operationId: get_ingredient
         tags:
-         - ingredientName
+         - ingredient
         parameters:
           - name: id
             in: query
             required: false
-            description: ingredientName resource identifier
+            description: ingredient resource identifier
             schema:
               type: int
           - name: name
             in: query
-            description: ingredientName's Name
+            description: ingredient's Name
             required: false
             schema:
               type: string
         responses:
             200:
-                description: ingredientNames to be returned
+                description: ingredients to be returned
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/jSendIngredientNames"
+                      $ref: "#/components/schemas/jSendIngredients"
             400:
                 description: Bad Request
             429:
@@ -64,24 +64,24 @@ def get_ingredient_name_resource():
 
     # return jsonify(apiHandle.dump(objs,many=True)), 200
 
-@bp.route('/ingredientNames', methods=['POST'])
+@bp.route('/ingredients', methods=['POST'])
 @jSend
-def post_ingredient_name_resource():
+def post_ingredient_resource():
     """
-    Create new ingredientName with given parameter inside request body
+    Create new ingredient with given parameter inside request body
     ---
     post:
-        description: Create new ingredientName with given parameter inside request body
-        operationId: post_ingredient_name
+        description: Create new ingredient with given parameter inside request body
+        operationId: post_ingredient
         tags:
-         - ingredientName
+         - ingredient
         responses:
             201:
-                description: return IngredientName item when it was successfully created
+                description: return ingredient item when it was successfully created
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/jSendIngredientName"
+                      $ref: "#/components/schemas/jSendIngredient"
             200:
                 description: Item Already exist
             400:
@@ -96,38 +96,38 @@ def post_ingredient_name_resource():
           content:
             application/json:
               schema: 
-                $ref: "#/components/schemas/IngredientNameSchemaPOST"
+                $ref: "#/components/schemas/IngredientSchemaPOST"
               
 
     """
     return apiHandle.post("name")
         
-@bp.route('/ingredientNames/<name>', methods=['GET'])
+@bp.route('/ingredients/<id>', methods=['GET'])
 @jSend
-def get_single_ingredient_name_resource(name):
+def get_single_ingredient_resource(name):
     """
-    Get specific ingredientName by the name
+    Get specific ingredient by the name
     ---
     get:
-        description: Get specific ingredientName
-        operationId: get_single_ingredient_name
+        description: Get specific ingredient
+        operationId: get_single_ingredient
         tags:
-         - ingredientName
+         - ingredient
         parameters:
           - name: name
             in: path
-            description: ingredientName's Name
+            description: ingredient's Name
             required: true
             schema:
               type: string
             
         responses:
             200:
-                description: ingredientNames to be returned
+                description: ingredients to be returned
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/jSendIngredientName"
+                      $ref: "#/components/schemas/jSendIngredient"
             400:
                 description: Bad Request
             429:
@@ -139,21 +139,21 @@ def get_single_ingredient_name_resource(name):
     obj = apiHandle.get(name=name) or abort(404)
     return apiHandle.getMethod(obj)
 
-@bp.route('/ingredientNames/<name>', methods=['PATCH'])
+@bp.route('/ingredients/<id>', methods=['PATCH'])
 @jSend
-def patch_single_ingredient_name_resource(name):
+def patch_single_ingredient_resource(name):
     """
-    Modifies specific ingredientName by the name
+    Modifies specific ingredient by the name
     ---
     patch:
-        description: Modifies specific ingredientName
-        operationId: patch_single_ingredient_name
+        description: Modifies specific ingredient
+        operationId: patch_single_ingredient
         tags:
-         - ingredientName
+         - ingredient
         parameters:
           - name: name
             in: path
-            description: ingredientName's Name
+            description: ingredient's Name
             required: true
             schema:
               type: string
@@ -163,14 +163,14 @@ def patch_single_ingredient_name_resource(name):
           content:
             application/json:
               schema: 
-                $ref: "#/components/schemas/IngredientNameSchemaPOST"
+                $ref: "#/components/schemas/IngredientSchemaPOST"
         responses:
             200:
-                description: ingredientNames to be returned
+                description: ingredients to be returned
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/jSendIngredientName"
+                      $ref: "#/components/schemas/jSendIngredient"
             400:
                 description: Bad Request
             429:
@@ -182,27 +182,27 @@ def patch_single_ingredient_name_resource(name):
     obj = apiHandle.get(name=name) or abort(404)
     return apiHandle.patch(obj)
 
-@bp.route('/ingredientNames/<name>', methods=['DELETE'])
+@bp.route('/ingredients/<id>', methods=['DELETE'])
 @jSend
-def delete_single_ingredient_name_resource(name):
+def delete_single_ingredient_resource(name):
     """
-    delete specific ingredientName by the name
+    delete specific ingredient by the name
     ---
     delete:
-        description: Delete specific ingredientName
-        operationId: delete_single_ingredient_name
+        description: Delete specific ingredient
+        operationId: delete_single_ingredient
         tags:
-         - ingredientName
+         - ingredient
         parameters:
           - name: name
             in: path
-            description: ingredientName's Name
+            description: ingredient's Name
             required: true
             schema:
               type: string
         responses:
             200:
-                description: successfully deleted ingredientNames entity
+                description: successfully deleted ingredients entity
             400:
                 description: Bad Request
             429:

@@ -51,19 +51,61 @@ class jSendSchema(ma.Schema):
     timestamp = fields.DateTime(required=True, description='Timestamp of the request')
     uuid = fields.UUID(required=True, description='UUID for the request, used for logging/debugging')
 
-class IngredienNameSchema(ma.SQLAlchemyAutoSchema):
+
+# ======================== IngredientName section ========================
+
+class IngredientNameSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = IngredientName
 
-class IngredienNameSchemaPOST(ma.SQLAlchemyAutoSchema):
+class IngredientNameSchemaPOST(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = IngredientName
         exclude = ('id',)
 
 class jSendIngredientNameSchema(jSendSchema):
-    data = fields.Nested('IngredienNameSchema', many=False,
+    data = fields.Nested('IngredientNameSchema', many=False,
                              required=True, description='IngredientName object, singular')
 
 class jSendIngredientNamesSchema(jSendSchema):
-    data = fields.Nested('IngredienNameSchema', many=True,
+    data = fields.Nested('IngredientNameSchema', many=True,
                              required=True, description='IngredientName object, Many')
+
+
+# ======================== IngredientUnit section ========================          
+
+class IngredientUnitSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = IngredientUnit
+
+class IngredientUnitSchemaPOST(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = IngredientUnit
+        exclude = ('id',)
+
+class jSendIngredientUnitSchema(jSendSchema):
+    data = fields.Nested('IngredientUnitSchema', many=False,
+                             required=True, description='IngredientName object, singular')
+
+class jSendIngredientUnitsSchema(jSendSchema):
+    data = fields.Nested('IngredientUnitSchema', many=True,
+                             required=True, description='IngredientName object, Many')
+
+# ======================== Ingredient section ========================     
+ 
+class IngredientSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Ingredient
+
+class IngredientSchemaPOST(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Ingredient
+        exclude = ('id',)
+
+class jSendIngredientSchema(jSendSchema):
+    data = fields.Nested('IngredientSchema', many=False,
+                             required=True, description='Ingredient object, singular')
+
+class jSendIngredientsSchema(jSendSchema):
+    data = fields.Nested('IngredientSchema', many=True,
+                             required=True, description='Ingredient object, Many')
