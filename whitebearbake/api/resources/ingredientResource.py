@@ -100,7 +100,7 @@ def post_ingredient_resource():
               
 
     """
-    return apiHandle.post("name")
+    return apiHandle.post(["name","unit"])
         
 @bp.route('/ingredients/<id>', methods=['GET'])
 @jSend

@@ -102,6 +102,12 @@ class masqlapi():
 
     def post(self,uniqueField):
         """ POST """
+
+        # if uniqueField is not a list we make it into one
+        if not isinstance(uniqueField, list):
+            uniqueField_list = [uniqueField]
+        else:
+            uniqueField_list = uniqueField
         # Grab request data
         json = request.get_json()
         if not json:
@@ -120,7 +126,8 @@ class masqlapi():
             abort(500, "schema load error with unknown reason")
             
         query = {}
-        query[uniqueField] = data[uniqueField]
+        for keys in uniqueField_list:
+            query[keys] = data[keys]
         # Check for existing row based on passed JSON
         current_app.logger.info(f"query data in post function:{query}")
         existing = self.resource.query.filter_by(**query).first()

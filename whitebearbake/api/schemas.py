@@ -94,10 +94,14 @@ class jSendIngredientUnitsSchema(jSendSchema):
 # ======================== Ingredient section ========================     
  
 class IngredientSchema(ma.SQLAlchemyAutoSchema):
+    name = fields.String(required=True)
+    unit = fields.String(required=True)
     class Meta:
         model = Ingredient
 
 class IngredientSchemaPOST(ma.SQLAlchemyAutoSchema):
+    name = fields.String(required=True)
+    unit = fields.String(required=True)
     class Meta:
         model = Ingredient
         exclude = ('id',)
@@ -109,3 +113,28 @@ class jSendIngredientSchema(jSendSchema):
 class jSendIngredientsSchema(jSendSchema):
     data = fields.Nested('IngredientSchema', many=True,
                              required=True, description='Ingredient object, Many')
+
+# ======================== Component section ========================
+
+# class IngredientField(fields.Field):
+#     """ A JSON field. Supports dicts and dict-like objects. """
+#     default_error_messages = {'invalid': 'Not a valid Ingredient object.'}
+
+#     def _serialize(self, value, attr, data):
+#         """ Load ingredient to obj """
+#         obj = Ingredient.query.filter_by(name=value['name'],unit=value['unit']).first()
+#         if not obj:
+#             obj = Ingredient(name=)
+#         return Ingredient.query.filter_by(name=value['name'],unit=value['unit']).first()
+
+#     def _deserialize(self, value, attr, data):
+#         """ Dumps ingredient from obj """
+#         if isinstance(value, collections.Mapping):
+#             return json.dumps(value)
+#         else:
+#             self.fail('invalid')     
+
+class ComponentSchena(ma.SQLAlchemyAutoSchema):
+
+    class Meta:
+        model = Component
