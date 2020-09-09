@@ -1,6 +1,9 @@
 from . import db
 import datetime
 
+from sqlalchemy.ext.associationproxy import association_proxy
+
+
 Component_Ingredient = db.Table('Component_Ingredient',
     db.Column('component_id', db.Integer, db.ForeignKey('component.id'), primary_key=True),
     db.Column('ingredient_id', db.Integer, db.ForeignKey('ingredient.id'), primary_key=True)
@@ -33,7 +36,6 @@ class IngredientName(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(60), unique=True,nullable=False)
 
-
 class IngredientUnit(db.Model):
     __tablename__ = 'ingredientunit'
     id = db.Column(db.Integer, primary_key=True)
@@ -44,8 +46,12 @@ class Ingredient(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name_id = db.Column(db.Integer, db.ForeignKey('ingredientname.id'),nullable=False)
     unit_id = db.Column(db.Integer, db.ForeignKey('ingredientunit.id'),nullable=False)
+    ingredientName_rel = db.relationship('IngredientName')
+    ingredientUnit_rel = db.relationship('IngredientUnit')
+    name = association_proxy('ingredientName_rel','name', creator=lambda name: IngredientName.query.filter_by(name=name).first() or IngredientName(name=name))
+    unit = association_proxy('ingredientUnit_rel','name', creator=lambda name: IngredientUnit.query.filter_by(name=name).first() or IngredientUnit(name=name))
     description = db.String(200)
-    components = db.relationship('Component', secondary=Component_Ingredient, lazy='joined')
+    # keyword = association_proxy('kw', 'keyword')
     
 # class Recipe(db.Model):
 #     __tablename__ = 'recipe'
