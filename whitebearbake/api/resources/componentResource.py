@@ -7,7 +7,7 @@ from flask_apispec.views import MethodResource
 # import inside the package
 from whitebearbake.api import bp
 from whitebearbake.api.resources.masqlapi import masqlapi
-from whitebearbake.api.schemas import ComponentSchema, ComponentSchemaPost
+from whitebearbake.api.schemas import ComponentSchema, ComponentSchemaPOST
 from whitebearbake.api.decorators import jSend
 
 from whitebearbake.database import db
@@ -17,39 +17,39 @@ from whitebearbake.database.models import Component
 
 
 
-apiHandle = masqlapi(db.session, Component ,ComponentSchema, ComponentSchemaPost)
+apiHandle = masqlapi(db.session, Component ,ComponentSchema, ComponentSchemaPOST)
 
 @bp.route('/components', methods=['GET'])
 @jSend
 def get_component_resource():
     """
-    Get list of ingredient that meet with query filter given in paramters
+    Get list of component that meet with query filter given in paramters
     ---
     get:
-        description: Parameters can be provided in the query to search for ingredient name
+        description: Parameters can be provided in the query to search for component name
         operationId: get_component
         tags:
-         - ingredient
+         - component
         parameters:
           - name: id
             in: query
             required: false
-            description: ingredient resource identifier
+            description: component resource identifier
             schema:
               type: int
           - name: name
             in: query
-            description: ingredient's Name
+            description: component's Name
             required: false
             schema:
               type: string
         responses:
             200:
-                description: ingredients to be returned
+                description: components to be returned
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/jSendIngredients"
+                      $ref: "#/components/schemas/jSendcomponents"
             400:
                 description: Bad Request
             429:
@@ -68,20 +68,20 @@ def get_component_resource():
 @jSend
 def post_component_resource():
     """
-    Create new ingredient with given parameter inside request body
+    Create new component with given parameter inside request body
     ---
     post:
-        description: Create new ingredient with given parameter inside request body
+        description: Create new component with given parameter inside request body
         operationId: post_component
         tags:
-         - ingredient
+         - component
         responses:
             201:
-                description: return ingredient item when it was successfully created
+                description: return component item when it was successfully created
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/jSendIngredient"
+                      $ref: "#/components/schemas/jSendComponent"
             200:
                 description: Item Already exist
             400:
@@ -102,32 +102,32 @@ def post_component_resource():
     """
     return apiHandle.post("name")
         
-@bp.route('/ingredients/<id>', methods=['GET'])
+@bp.route('/components/<id>', methods=['GET'])
 @jSend
 def get_single_component_resource(name):
     """
-    Get specific ingredient by the name
+    Get specific component by the name
     ---
     get:
-        description: Get specific ingredient
+        description: Get specific component
         operationId: get_single_component
         tags:
-         - ingredient
+         - component
         parameters:
           - name: name
             in: path
-            description: ingredient's Name
+            description: component's Name
             required: true
             schema:
               type: string
             
         responses:
             200:
-                description: ingredients to be returned
+                description: components to be returned
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/jSendIngredient"
+                      $ref: "#/components/schemas/jSendComponent"
             400:
                 description: Bad Request
             429:
@@ -143,17 +143,17 @@ def get_single_component_resource(name):
 @jSend
 def patch_single_component_resource(id):
     """
-    Modifies specific ingredient by the name
+    Modifies specific component by the name
     ---
     patch:
-        description: Modifies specific ingredient
+        description: Modifies specific component
         operationId: patch_single_component
         tags:
-         - ingredient
+         - component
         parameters:
           - name: name
             in: path
-            description: ingredient's Name
+            description: component's Name
             required: true
             schema:
               type: string
@@ -166,11 +166,11 @@ def patch_single_component_resource(id):
                 $ref: "#/components/schemas/ComponentSchemaPOST"
         responses:
             200:
-                description: ingredients to be returned
+                description: components to be returned
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/jSendIngredient"
+                      $ref: "#/components/schemas/jSendComponent"
             400:
                 description: Bad Request
             429:
@@ -186,23 +186,23 @@ def patch_single_component_resource(id):
 @jSend
 def delete_single_component_resource(id):
     """
-    delete specific ingredient by the name
+    delete specific component by the name
     ---
     delete:
-        description: Delete specific ingredient
+        description: Delete specific component
         operationId: delete_single_component
         tags:
-         - ingredient
+         - component
         parameters:
           - name: name
             in: path
-            description: ingredient's Name
+            description: component's Name
             required: true
             schema:
               type: string
         responses:
             200:
-                description: successfully deleted ingredients entity
+                description: successfully deleted components entity
             400:
                 description: Bad Request
             429:
