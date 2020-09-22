@@ -13,6 +13,7 @@ from whitebearbake.config import config
 from whitebearbake.api.resources.ingredientNameResouce import *
 from whitebearbake.api.resources.ingredientUnitResource import *
 from whitebearbake.api.resources.ingredientResource import * 
+from whitebearbake.api.resources.componentResource import *
 
 from whitebearbake.api.schemas import *
 
@@ -52,6 +53,13 @@ def swagger():
     spec.path(view=patch_single_ingredient_resource)
     spec.path(view=delete_single_ingredient_resource)
 
+    # Component
+    spec.path(view=get_component_resource)
+    spec.path(view=post_component_resource)
+    spec.path(view=get_single_component_resource)
+    spec.path(view=patch_single_component_resource)
+    spec.path(view=delete_single_component_resource)
+
     
     # === add definition
 
@@ -72,5 +80,11 @@ def swagger():
     spec.components.schema("IngredientSchemaPOST", schema=IngredientSchemaPOST)
     spec.components.schema("jSendIngredient", schema=jSendIngredientSchema)
     spec.components.schema("jSendIngredients", schema=jSendIngredientsSchema)
+
+    # Component
+    spec.components.schema("Component", schema=ComponentSchema)
+    spec.components.schema("ComponentSchemaPOST", schema=ComponentSchemaPOST)
+    spec.components.schema("jSendComponent", schema=jSendComponentSchema)
+    spec.components.schema("jSendComponents", schema=jSendComponentsSchema)
 
     return spec.to_dict()

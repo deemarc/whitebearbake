@@ -4,6 +4,7 @@ import json
 from flask_marshmallow import Marshmallow
 from marshmallow import fields, Schema, validates_schema, ValidationError, pre_load
 
+from whitebearbake.database import db
 from whitebearbake.database.models import *
 
 
@@ -98,6 +99,14 @@ class IngredientSchema(ma.SQLAlchemyAutoSchema):
     unit = fields.String(required=True)
     class Meta:
         model = Ingredient
+        
+class IngredientSchemaNESTED(ma.SQLAlchemyAutoSchema):
+    id = fields.Integer(required=True)
+    class Meta:
+        model = Ingredient
+        sqla_session = db.session
+        fields = ('id',)
+        load_instance = True
 
 class IngredientSchemaPOST(ma.SQLAlchemyAutoSchema):
     name = fields.String(required=True)
@@ -134,7 +143,28 @@ class jSendIngredientsSchema(jSendSchema):
 #         else:
 #             self.fail('invalid')     
 
-class ComponentSchena(ma.SQLAlchemyAutoSchema):
-
+class ComponentSchema(ma.SQLAlchemyAutoSchema):
+    ingredients = fields.Nested('IngredientSchema', many=True)
     class Meta:
         model = Component
+        # fields = ('id','name','instuction_list','ingredient_amount','ingredients','isRequire')
+
+class ComponentSchemaPOST(ma.SQLAlchemyAutoSchema):
+    ingredients = fields.Nested('IngredientSchemaNESTED', many=True)
+    class Meta:
+        model = Component
+        exclude = ('id',)
+
+
+        # sqla_session = ma.sqla_session
+        # load_instance = True
+        
+        
+
+class jSendComponentSchema(jSendSchema):
+    data = fields.Nested('ComponentSchema', many=False,
+                             required=True, description='Ingredient object, singular')
+
+class jSendComponentsSchema(jSendSchema):
+    data = fields.Nested('ComponentSchema', many=True,
+                             required=True, description='Ingredient object, Many')
