@@ -9,17 +9,22 @@ Component_Ingredient = db.Table('Component_Ingredient',
     db.Column('ingredient_id', db.Integer, db.ForeignKey('ingredient.id'), primary_key=True)
 )
 
-# class Baker(db.Model):
-#     __tablename__ = 'baker'
+Recipe_Component = db.Table('Recipe_Component',
+    db.Column('recipe_id', db.Integer, db.ForeignKey('recipe.id'), primary_key=True),
+    db.Column('component_id', db.Integer, db.ForeignKey('component.id'), primary_key=True)
+)
 
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.String(60, unique=True, nullable=False)
-#     description = db.Column(db.String(200))
-#     image_link = db.Column(db.String(500))
-#     facebook_link = db.Column(db.String(120))
-#     website = db.Column(db.String(120))
-#     youtube_linke = db.Column(db.String(120))
-#     phone = db.Column(db.String(120))
+class Baker(db.Model):
+    __tablename__ = 'baker'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(60), unique=True, nullable=False)
+    description = db.Column(db.String(200))
+    image_link = db.Column(db.String(500))
+    facebook_link = db.Column(db.String(120))
+    website = db.Column(db.String(120))
+    youtube_linke = db.Column(db.String(120))
+    phone = db.Column(db.String(120))
 
 class Component(db.Model):
     __tablename__ = 'component'
@@ -52,24 +57,29 @@ class Ingredient(db.Model):
     unit = association_proxy('ingredientUnit_rel','name', creator=lambda name: IngredientUnit.query.filter_by(name=name).first() or IngredientUnit(name=name))
     description = db.String(200)
     # keyword = association_proxy('kw', 'keyword')
-    
-# class Recipe(db.Model):
-#     __tablename__ = 'recipe'
+class RecpImage(db.Model):
+    # it is and actual item store not and intermediate table for many-to-many relationship
+    # so, it decide to use camel case
+    __tablename__= 'recpimage'
 
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(200), nullable=False)
-#     description = db.Column(db.String(200))
-#     created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
-#     updated = db.Column(db.DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    id = db.Column(db.Integer, primary_key=True)
+    image_link = db.Column(db.String(500), nullable=False, unique=True)
+    caption = db.Column(db.String(200))
+
+class Recipe(db.Model):
+    __tablename__ = 'recipe'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.String(200))
+    created = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    updated = db.Column(db.DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    baker_id = db.Column(db.Integer, db.ForeignKey("baker.id"))
+    baker = db.relationship('Baker', backref="recipes")
+    img_id = db.Column(db.Integer, db.ForeignKey("recpimage.id"))
+    img = db.relationship('RecpImage',backref="recipe")
+    components = db.relationship('Component', secondary=Recipe_Component, lazy='joined')
 
 
 
-# class RecpImage():
-#     # it is and actual item store not and intermediate table for many-to-many relationship
-#     # so, it decide to use camel case
-#     __tablename__= 'recpimage'
-
-#     id = db.Column(db.Integer, primary_key=True)
-#     image_link = db.Column(db.String(500), nullable=False)
-#     caption = db.Column(db.String(200))
 
