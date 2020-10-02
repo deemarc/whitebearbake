@@ -40,9 +40,9 @@ class IngredientUnitTestCase(unittest.TestCase):
     """
     Testing ingredinetName endpoint
     """
-    def test_get_ingredientName(self):
+    def test_get_IngredientUnit(self):
         # print("****** runtest test_get_questions")
-        """Tests getting ingredientName"""
+        """Tests getting IngredientUnit"""
 
         # get response and load data
         response = self.client().get(self.apiRoot + '/ingredientUnits')
@@ -52,20 +52,20 @@ class IngredientUnitTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['status'], 'success')
 
-    def test_post_ingredientName_no_data(self):
+    def test_post_IngredientUnit_no_data(self):
         response = self.client().post(self.apiRoot + '/ingredientUnits')
 
         # check status code and message
         self.assertEqual(response.status_code, 400)
 
-    def test_get_ingredientName_not_found(self):
+    def test_get_IngredientUnit_not_found(self):
         response = self.client().post(self.apiRoot + '/ingredientUnits/0')
 
         # check status code and message
         self.assertEqual(response.status_code, 404)
 
     def test_crud_ingredinetName(self):
-        """ Test whole sequence post patch delete ingredientName
+        """ Test whole sequence post patch delete IngredientUnit
         and use get to verfy each step """
         postName = "dummyUnit"
         patchName = "dummyUnit2"
@@ -82,7 +82,7 @@ class IngredientUnitTestCase(unittest.TestCase):
         self.assertEqual(data['status'], 'success')
         self.assertEqual((data['data']).get('name','inValid'),postName)
 
-        # === patch ingredientName ===
+        # === patch IngredientUnit ===
         data = {}
         data['name'] = patchName
         # fullUrl = self.apiRoot + '/ingredientUnits/'+ f'{postName}'
@@ -96,7 +96,7 @@ class IngredientUnitTestCase(unittest.TestCase):
         # verify that new name is updated in the database
         self.assertEqual((data['data']).get('name','inValid'),patchName)
 
-        # === delete ingredientName ===
+        # === delete IngredientUnit ===
         response = self.client().delete(self.apiRoot + '/ingredientUnits/' + f'{patchName}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['status'], 'success')
