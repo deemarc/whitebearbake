@@ -102,9 +102,9 @@ def post_ingredient_unit_resource():
     """
     return apiHandle.post("name")
         
-@bp.route('/ingredientUnits/<id>', methods=['GET'])
+@bp.route('/ingredientUnits/<name>', methods=['GET'])
 @jSend
-def get_single_ingredient_unit_resource(id):
+def get_single_ingredient_unit_resource(name):
     """
     Get specific ingredientUnit by the name
     ---
@@ -136,12 +136,12 @@ def get_single_ingredient_unit_resource(id):
                 description: Internal Server Error
 
     """
-    obj = apiHandle.get(id=id) or abort(404)
+    obj = apiHandle.get(name=name) or abort(404)
     return apiHandle.getMethod(obj)
 
-@bp.route('/ingredientUnits/<id>', methods=['PATCH'])
+@bp.route('/ingredientUnits/<name>', methods=['PATCH'])
 @jSend
-def patch_single_ingredient_unit_resource(id):
+def patch_single_ingredient_unit_resource(name):
     """
     Modifies specific ingredientUnit by the name
     ---
@@ -179,12 +179,12 @@ def patch_single_ingredient_unit_resource(id):
                 description: Internal Server Error
 
     """
-    obj = apiHandle.get(id=id) or abort(404)
+    obj = apiHandle.get(name=name) or abort(404)
     return apiHandle.patch(obj)
 
-@bp.route('/ingredientUnits/<id>', methods=['DELETE'])
+@bp.route('/ingredientUnits/<name>', methods=['DELETE'])
 @jSend
-def delete_single_ingredient_unit_resource(id):
+def delete_single_ingredient_unit_resource(name):
     """
     delete specific ingredientUnit by the name
     ---
@@ -211,7 +211,7 @@ def delete_single_ingredient_unit_resource(id):
                 description: Internal Server Error
 
     """
-    obj = apiHandle.get(id=id) or abort(404)
+    obj = apiHandle.get(name=name) or abort(404)
     return apiHandle.delete(obj)
 
 
