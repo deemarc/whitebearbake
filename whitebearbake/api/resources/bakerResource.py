@@ -7,49 +7,49 @@ from flask_apispec.views import MethodResource
 # import inside the package
 from whitebearbake.api import bp
 from whitebearbake.api.resources.masqlapi import masqlapi
-from whitebearbake.api.schemas import ComponentSchema, ComponentSchemaPOST
+from whitebearbake.api.schemas import BakerSchema, BakerSchemaPOST
 from whitebearbake.api.decorators import jSend
 
 from whitebearbake.database import db
-from whitebearbake.database.models import Component
+from whitebearbake.database.models import Baker
 
 
 
 
 
-apiHandle = masqlapi(db.session, Component ,ComponentSchema, ComponentSchemaPOST)
+apiHandle = masqlapi(db.session, Baker ,BakerSchema, BakerSchemaPOST)
 
-@bp.route('/components', methods=['GET'])
+@bp.route('/bakers', methods=['GET'])
 @jSend
-def get_component_resource():
+def get_baker_resource():
     """
-    Get list of component that meet with query filter given in paramters
+    Get list of baker that meet with query filter given in paramters
     ---
     get:
-        description: Parameters can be provided in the query to search for component 
-        operationId: get_component
+        description: Parameters can be provided in the query to search for baker 
+        operationId: get_baker
         tags:
-         - component
+         - baker
         parameters:
           - name: id
             in: query
             required: false
-            description: component resource identifier
+            description: baker resource identifier
             schema:
               type: int
           - name: name
             in: query
-            description: component's Name
+            description: baker's Name
             required: false
             schema:
               type: string
         responses:
             200:
-                description: components to be returned
+                description: bakers to be returned
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/jSendComponents"
+                      $ref: "#/components/schemas/jSendBakers"
             400:
                 description: Bad Request
             429:
@@ -63,24 +63,24 @@ def get_component_resource():
 
     # return jsonify(apiHandle.dump(objs,many=True)), 200
 
-@bp.route('/components', methods=['POST'])
+@bp.route('/bakers', methods=['POST'])
 @jSend
-def post_component_resource():
+def post_baker_resource():
     """
-    Create new component with given parameter inside request body
+    Create new baker with given parameter inside request body
     ---
     post:
-        description: Create new component with given parameter inside request body
-        operationId: post_component
+        description: Create new baker with given parameter inside request body
+        operationId: post_baker
         tags:
-         - component
+         - baker
         responses:
             201:
-                description: return component item when it was successfully created
+                description: return baker item when it was successfully created
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/jSendComponent"
+                      $ref: "#/components/schemas/jSendBaker"
             200:
                 description: Item Already exist
             400:
@@ -95,37 +95,37 @@ def post_component_resource():
           content:
             application/json:
               schema: 
-                $ref: "#/components/schemas/ComponentSchemaPOST"
+                $ref: "#/components/schemas/BakerSchemaPOST"
               
     """
     return apiHandle.post("name")
         
-@bp.route('/components/<id>', methods=['GET'])
+@bp.route('/bakers/<id>', methods=['GET'])
 @jSend
-def get_single_component_resource(name):
+def get_single_baker_resource(name):
     """
-    Get specific component by the id
+    Get specific baker by the id
     ---
     get:
-        description: Get specific component
-        operationId: get_single_component
+        description: Get specific baker
+        operationId: get_single_baker
         tags:
-         - component
+         - baker
         parameters:
           - name: id
             in: path
-            description: component's id
+            description: baker's id
             required: true
             schema:
               type: int
             
         responses:
             200:
-                description: components to be returned
+                description: bakers to be returned
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/jSendComponent"
+                      $ref: "#/components/schemas/jSendBaker"
             400:
                 description: Bad Request
             429:
@@ -136,21 +136,21 @@ def get_single_component_resource(name):
     obj = apiHandle.get(name=name) or abort(404)
     return apiHandle.getMethod(obj)
 
-@bp.route('/components/<id>', methods=['PATCH'])
+@bp.route('/bakers/<id>', methods=['PATCH'])
 @jSend
-def patch_single_component_resource(id):
+def patch_single_baker_resource(id):
     """
-    Modifies specific component by the id
+    Modifies specific baker by the id
     ---
     patch:
-        description: Modifies specific component
-        operationId: patch_single_component
+        description: Modifies specific baker
+        operationId: patch_single_baker
         tags:
-         - component
+         - baker
         parameters:
           - name: id
             in: path
-            description: component's id
+            description: baker's id
             required: true
             schema:
               type: int
@@ -160,14 +160,14 @@ def patch_single_component_resource(id):
           content:
             application/json:
               schema: 
-                $ref: "#/components/schemas/ComponentSchemaPOST"
+                $ref: "#/components/schemas/BakerSchemaPOST"
         responses:
             200:
-                description: components to be returned
+                description: bakers to be returned
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/jSendComponent"
+                      $ref: "#/components/schemas/jSendBaker"
             400:
                 description: Bad Request
             429:
@@ -178,27 +178,27 @@ def patch_single_component_resource(id):
     obj = apiHandle.get(id=id) or abort(404)
     return apiHandle.patch(obj)
 
-@bp.route('/components/<id>', methods=['DELETE'])
+@bp.route('/bakers/<id>', methods=['DELETE'])
 @jSend
-def delete_single_component_resource(id):
+def delete_single_baker_resource(id):
     """
-    delete specific component by the id
+    delete specific baker by the id
     ---
     delete:
-        description: Delete specific component
-        operationId: delete_single_component
+        description: Delete specific baker
+        operationId: delete_single_baker
         tags:
-         - component
+         - baker
         parameters:
           - name: id
             in: path
-            description: component's id
+            description: baker's id
             required: true
             schema:
               type: string
         responses:
             200:
-                description: successfully deleted components entity
+                description: successfully deleted bakers entity
             400:
                 description: Bad Request
             429:

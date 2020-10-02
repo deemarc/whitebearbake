@@ -100,13 +100,20 @@ class IngredientSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Ingredient
         
-class IngredientSchemaNESTED(ma.SQLAlchemyAutoSchema):
+class IngredientLoadInstSchema(ma.SQLAlchemyAutoSchema):
     id = fields.Integer(required=True)
     class Meta:
         model = Ingredient
         sqla_session = db.session
         fields = ('id',)
         load_instance = True
+
+class IngredientSchemaNESTED(ma.SQLAlchemyAutoSchema):
+    name = fields.String(required=True)
+    unit = fields.String(required=True)
+    class Meta:
+        model = Ingredient 
+        exclude = ('id',)
 
 class IngredientSchemaPOST(ma.SQLAlchemyAutoSchema):
     name = fields.String(required=True)
@@ -125,46 +132,137 @@ class jSendIngredientsSchema(jSendSchema):
 
 # ======================== Component section ========================
 
-# class IngredientField(fields.Field):
-#     """ A JSON field. Supports dicts and dict-like objects. """
-#     default_error_messages = {'invalid': 'Not a valid Ingredient object.'}
-
-#     def _serialize(self, value, attr, data):
-#         """ Load ingredient to obj """
-#         obj = Ingredient.query.filter_by(name=value['name'],unit=value['unit']).first()
-#         if not obj:
-#             obj = Ingredient(name=)
-#         return Ingredient.query.filter_by(name=value['name'],unit=value['unit']).first()
-
-#     def _deserialize(self, value, attr, data):
-#         """ Dumps ingredient from obj """
-#         if isinstance(value, collections.Mapping):
-#             return json.dumps(value)
-#         else:
-#             self.fail('invalid')     
-
 class ComponentSchema(ma.SQLAlchemyAutoSchema):
-    ingredients = fields.Nested('IngredientSchema', many=True)
+    ingredients = fields.Nested('IngredientSchemaNESTED', many=True)
     class Meta:
         model = Component
         # fields = ('id','name','instuction_list','ingredient_amount','ingredients','isRequire')
 
 class ComponentSchemaPOST(ma.SQLAlchemyAutoSchema):
-    ingredients = fields.Nested('IngredientSchemaNESTED', many=True)
+    ingredients = fields.Nested('IngredientLoadInstSchema', many=True)
     class Meta:
         model = Component
         exclude = ('id',)
-
-
-        # sqla_session = ma.sqla_session
-        # load_instance = True
-        
         
 
 class jSendComponentSchema(jSendSchema):
     data = fields.Nested('ComponentSchema', many=False,
-                             required=True, description='Ingredient object, singular')
+                             required=True, description='Component object, singular')
 
 class jSendComponentsSchema(jSendSchema):
     data = fields.Nested('ComponentSchema', many=True,
-                             required=True, description='Ingredient object, Many')
+                             required=True, description='Component object, Many')
+                    
+# ======================== Baker section ========================
+
+# recipe display for baker
+class RecipeSchemaNESTED(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Recipe
+        fields = ('name',)
+
+class RecipeLoadInstSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Recipe
+        sqla_session = db.session
+        fields = ('id',)
+        load_instance = True
+
+class BakerSchema(ma.SQLAlchemyAutoSchema):
+    recipes = fields.Nested('RecipeSchemaNESTED', many=True)
+    class Meta:
+        model = Baker
+        # fields = ('id','name','instuction_list','ingredient_amount','ingredients','isRequire')
+
+class BakerSchemaPOST(ma.SQLAlchemyAutoSchema):
+    recipes = fields.Nested('RecipeLoadInstSchema', many=True)
+    class Meta:
+        model = Baker
+        exclude = ('id',)
+
+class BakerLoadInstSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Baker
+        sqla_session = db.session
+        fields = ('id',)
+        load_instance = True
+
+class BakerSchemaNESTED(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Baker
+        fields = ('name',)
+        
+
+class jSendBakerSchema(jSendSchema):
+    data = fields.Nested('BakerSchema', many=False,
+                             required=True, description='Baker object, singular')
+
+class jSendBakersSchema(jSendSchema):
+    data = fields.Nested('BakerSchema', many=True,
+                             required=True, description='Baker object, Many') 
+
+# ======================== RecpImage section ========================
+class RecpImageSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = RecpImage
+
+class RecpImageSchemaPOST(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = RecpImage
+        exclude = ('id',)
+
+class RecpImageLoadInstSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = RecpImage
+        sqla_session = db.session
+        fields = ('id',)
+        load_instance = True
+
+class jSendRecpImageSchema(jSendSchema):
+    data = fields.Nested('RecpImageSchema', many=False,
+                             required=True, description='RecpImage object, singular')
+
+class jSendRecpImagesSchema(jSendSchema):
+    data = fields.Nested('RecpImageSchema', many=True,
+                             required=True, description='RecpImage object, Many')
+
+class RecpImageSchemaNESTED(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = RecpImage
+        fields = ('image_link',)
+
+# ======================== Recipe section ========================
+# class RecipeSchemaNESTED(ma.SQLAlchemyAutoSchema):
+#     class Meta:
+#         model = Recipe
+#         fields = ('name',)
+
+# class RecipeLoadInstSchema(ma.SQLAlchemyAutoSchema):
+#     class Meta:
+#         model = Recipe
+#         sqla_session = db.session
+#         fields = ('id',)
+#         load_instance = True
+
+class RecipeSchema(ma.SQLAlchemyAutoSchema):
+    baker = fields.Nested('RecipeSchemaNESTED', many=False)
+    img = fields.Nested('IngredientSchema', many=False)
+    class Meta:
+        model = Recipe
+        # fields = ('id','name','instuction_list','ingredient_amount','ingredients','isRequire')
+
+class RecipeSchemaPOST(ma.SQLAlchemyAutoSchema):
+    baker = fields.Nested('BakerLoadInstSchema', many=False)
+    img = fields.Nested('RecpImageLoadInstSchema', many=False)
+    class Meta:
+        model = Recipe
+        exclude = ('id',)
+        
+
+class jSendRecipeSchema(jSendSchema):
+    data = fields.Nested('RecipeSchema', many=False,
+                             required=True, description='Recipe object, singular')
+
+class jSendRecipesSchema(jSendSchema):
+    data = fields.Nested('RecipeSchema', many=True,
+                             required=True, description='Recipe object, Many')

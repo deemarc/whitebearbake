@@ -7,49 +7,49 @@ from flask_apispec.views import MethodResource
 # import inside the package
 from whitebearbake.api import bp
 from whitebearbake.api.resources.masqlapi import masqlapi
-from whitebearbake.api.schemas import ComponentSchema, ComponentSchemaPOST
+from whitebearbake.api.schemas import RecpImageSchema, RecpImageSchemaPOST
 from whitebearbake.api.decorators import jSend
 
 from whitebearbake.database import db
-from whitebearbake.database.models import Component
+from whitebearbake.database.models import RecpImage
 
 
 
 
 
-apiHandle = masqlapi(db.session, Component ,ComponentSchema, ComponentSchemaPOST)
+apiHandle = masqlapi(db.session, RecpImage ,RecpImageSchema, RecpImageSchemaPOST)
 
-@bp.route('/components', methods=['GET'])
+@bp.route('/recpimagess', methods=['GET'])
 @jSend
-def get_component_resource():
+def get_recpImage_resource():
     """
-    Get list of component that meet with query filter given in paramters
+    Get list of recpImages that meet with query filter given in paramters
     ---
     get:
-        description: Parameters can be provided in the query to search for component 
-        operationId: get_component
+        description: Parameters can be provided in the query to search for recpImages 
+        operationId: get_recpImage
         tags:
-         - component
+         - recpImages
         parameters:
           - name: id
             in: query
             required: false
-            description: component resource identifier
+            description: recpImages resource identifier
             schema:
               type: int
           - name: name
             in: query
-            description: component's Name
+            description: recpImages's Name
             required: false
             schema:
               type: string
         responses:
             200:
-                description: components to be returned
+                description: recpImagess to be returned
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/jSendComponents"
+                      $ref: "#/components/schemas/jSendRecpImages"
             400:
                 description: Bad Request
             429:
@@ -63,24 +63,24 @@ def get_component_resource():
 
     # return jsonify(apiHandle.dump(objs,many=True)), 200
 
-@bp.route('/components', methods=['POST'])
+@bp.route('/recpimages', methods=['POST'])
 @jSend
-def post_component_resource():
+def post_recpImage_resource():
     """
-    Create new component with given parameter inside request body
+    Create new recpImage with given parameter inside request body
     ---
     post:
-        description: Create new component with given parameter inside request body
-        operationId: post_component
+        description: Create new recpImage with given parameter inside request body
+        operationId: post_recpImage
         tags:
-         - component
+         - recpImage
         responses:
             201:
-                description: return component item when it was successfully created
+                description: return recpImage item when it was successfully created
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/jSendComponent"
+                      $ref: "#/components/schemas/jSendRecpImage"
             200:
                 description: Item Already exist
             400:
@@ -95,37 +95,37 @@ def post_component_resource():
           content:
             application/json:
               schema: 
-                $ref: "#/components/schemas/ComponentSchemaPOST"
+                $ref: "#/components/schemas/RecpImageSchemaPOST"
               
     """
     return apiHandle.post("name")
         
-@bp.route('/components/<id>', methods=['GET'])
+@bp.route('/recpimages/<id>', methods=['GET'])
 @jSend
-def get_single_component_resource(name):
+def get_single_recpImage_resource(name):
     """
-    Get specific component by the id
+    Get specific RecpImage by the id
     ---
     get:
-        description: Get specific component
-        operationId: get_single_component
+        description: Get specific RecpImage
+        operationId: get_single_recpImage
         tags:
-         - component
+         - recpImage
         parameters:
           - name: id
             in: path
-            description: component's id
+            description: RecpImage's id
             required: true
             schema:
               type: int
             
         responses:
             200:
-                description: components to be returned
+                description: RecpImages to be returned
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/jSendComponent"
+                      $ref: "#/components/schemas/jSendRecpImage"
             400:
                 description: Bad Request
             429:
@@ -136,21 +136,21 @@ def get_single_component_resource(name):
     obj = apiHandle.get(name=name) or abort(404)
     return apiHandle.getMethod(obj)
 
-@bp.route('/components/<id>', methods=['PATCH'])
+@bp.route('/recpimages/<id>', methods=['PATCH'])
 @jSend
-def patch_single_component_resource(id):
+def patch_single_recpImage_resource(id):
     """
-    Modifies specific component by the id
+    Modifies specific RecpImage by the id
     ---
     patch:
-        description: Modifies specific component
-        operationId: patch_single_component
+        description: Modifies specific RecpImage
+        operationId: patch_single_recpImage
         tags:
-         - component
+         - recpImage
         parameters:
           - name: id
             in: path
-            description: component's id
+            description: RecpImage's id
             required: true
             schema:
               type: int
@@ -160,14 +160,14 @@ def patch_single_component_resource(id):
           content:
             application/json:
               schema: 
-                $ref: "#/components/schemas/ComponentSchemaPOST"
+                $ref: "#/components/schemas/RecpImageSchemaPOST"
         responses:
             200:
-                description: components to be returned
+                description: RecpImages to be returned
                 content:
                   application/json:
                     schema:
-                      $ref: "#/components/schemas/jSendComponent"
+                      $ref: "#/components/schemas/jSendRecpImage"
             400:
                 description: Bad Request
             429:
@@ -178,27 +178,27 @@ def patch_single_component_resource(id):
     obj = apiHandle.get(id=id) or abort(404)
     return apiHandle.patch(obj)
 
-@bp.route('/components/<id>', methods=['DELETE'])
+@bp.route('/recpimages/<id>', methods=['DELETE'])
 @jSend
-def delete_single_component_resource(id):
+def delete_single_recpImage_resource(id):
     """
-    delete specific component by the id
+    delete specific recpImage by the id
     ---
     delete:
-        description: Delete specific component
-        operationId: delete_single_component
+        description: Delete specific recpImage
+        operationId: delete_single_recpImage
         tags:
-         - component
+         - recpImage
         parameters:
           - name: id
             in: path
-            description: component's id
+            description: recpImage's id
             required: true
             schema:
               type: string
         responses:
             200:
-                description: successfully deleted components entity
+                description: successfully deleted recpImages entity
             400:
                 description: Bad Request
             429:
