@@ -14,6 +14,9 @@ from whitebearbake.api.resources.ingredientNameResouce import *
 from whitebearbake.api.resources.ingredientUnitResource import *
 from whitebearbake.api.resources.ingredientResource import * 
 from whitebearbake.api.resources.componentResource import *
+from whitebearbake.api.resources.bakerResource import *
+from whitebearbake.api.resources.recipeResource import *
+from whitebearbake.api.resources.recpImageResource import *
 
 from whitebearbake.api.schemas import *
 
@@ -60,6 +63,28 @@ def swagger():
     spec.path(view=patch_single_component_resource)
     spec.path(view=delete_single_component_resource)
 
+    # Baker
+    spec.path(view=get_baker_resource)
+    spec.path(view=post_baker_resource)
+    spec.path(view=get_single_baker_resource)
+    spec.path(view=patch_single_baker_resource)
+    spec.path(view=delete_single_baker_resource)
+
+    # Recipe
+    spec.path(view=get_recipe_resource)
+    spec.path(view=post_recipe_resource)
+    spec.path(view=get_single_recipe_resource)
+    spec.path(view=patch_single_recipe_resource)
+    spec.path(view=delete_single_recipe_resource)
+
+    # RecpImage
+    spec.path(view=get_recpImage_resource)
+    spec.path(view=post_recpImage_resource)
+    spec.path(view=get_single_recpImage_resource)
+    spec.path(view=patch_single_recpImage_resource)
+    spec.path(view=delete_single_recpImage_resource)
+    
+
     
     # === add definition
 
@@ -86,5 +111,23 @@ def swagger():
     spec.components.schema("ComponentSchemaPOST", schema=ComponentSchemaPOST)
     spec.components.schema("jSendComponent", schema=jSendComponentSchema)
     spec.components.schema("jSendComponents", schema=jSendComponentsSchema)
+
+    # Baker
+    spec.components.schema("Baker", schema=BakerSchema)
+    spec.components.schema("BakerSchemaPOST", schema=BakerSchemaPOST)
+    spec.components.schema("jSendBaker", schema=jSendBakerSchema)
+    spec.components.schema("jSendBakers", schema=jSendComponentsSchema)
+
+    # Recipe
+    spec.components.schema("Recipe", schema=RecipeSchema)
+    spec.components.schema("RecipeSchemaPOST", schema=RecipeSchemaPOST)
+    spec.components.schema("jSendRecipe", schema=jSendRecipeSchema)
+    spec.components.schema("jSendRecipes", schema=jSendComponentsSchema)
+
+    # RecipeImage
+    spec.components.schema("RecpImage", schema=RecpImageSchema)
+    spec.components.schema("RecpImageSchemaPOST", schema=RecpImageSchemaPOST)
+    spec.components.schema("jSendRecipeImage", schema=jSendRecpImageSchema)
+    spec.components.schema("jSendRecipeImages", schema=jSendRecpImagesSchema)
 
     return spec.to_dict()
