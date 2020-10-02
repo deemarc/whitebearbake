@@ -40,7 +40,7 @@ class IngredientUnitTestCase(unittest.TestCase):
     """
     Testing ingredinetName endpoint
     """
-    def test_get_IngredientUnit(self):
+    def test_get_ingredientUnit(self):
         # print("****** runtest test_get_questions")
         """Tests getting IngredientUnit"""
 
@@ -52,19 +52,19 @@ class IngredientUnitTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['status'], 'success')
 
-    def test_post_IngredientUnit_no_data(self):
+    def test_post_ingredientUnit_no_data(self):
         response = self.client().post(self.apiRoot + '/ingredientUnits')
 
         # check status code and message
         self.assertEqual(response.status_code, 400)
 
-    def test_get_IngredientUnit_not_found(self):
+    def test_get_ingredientUnit_not_found(self):
         response = self.client().post(self.apiRoot + '/ingredientUnits/0')
 
         # check status code and message
         self.assertEqual(response.status_code, 404)
 
-    def test_crud_ingredinetName(self):
+    def test_crud_ingredinetUnit(self):
         """ Test whole sequence post patch delete IngredientUnit
         and use get to verfy each step """
         postName = "dummyUnit"
