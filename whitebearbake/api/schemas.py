@@ -2,7 +2,7 @@ import collections
 import json
 
 from flask_marshmallow import Marshmallow
-from marshmallow import fields, Schema, validates_schema, ValidationError, pre_load
+from marshmallow import fields, Schema, validates_schema, ValidationError, pre_load, post_load,post_dump
 
 from whitebearbake.database import db
 from whitebearbake.database.models import *
@@ -93,7 +93,7 @@ class jSendIngredientUnitsSchema(jSendSchema):
                              required=True, description='IngredientName object, Many')
 
 # ======================== Ingredient section ========================     
- 
+
 class IngredientSchema(ma.SQLAlchemyAutoSchema):
     name = fields.String(required=True)
     unit = fields.String(required=True)
@@ -115,12 +115,31 @@ class IngredientSchemaNESTED(ma.SQLAlchemyAutoSchema):
         model = Ingredient 
         exclude = ('id',)
 
+
 class IngredientSchemaPOST(ma.SQLAlchemyAutoSchema):
-    name = fields.String(required=True)
-    unit = fields.String(required=True)
+    id = fields.Int(dump_only=True)
+    name = fields.String(required=True, load_only=True)
+    unit = fields.String(required=True, load_only=True)
+    ingredientName_rel = fields.Nested('IngredientNameSchema', dump_only=True)
+    ingredientUnit_rel = fields.Nested('IngredientUnitSchema', dump_only=True)
+
     class Meta:
-        model = Ingredient
-        exclude = ('id',)
+        model = Ingredient    
+
+    @post_load
+    def get_name_unit(self, data, **kwags):
+        ingredient_name = data.get("name", None) 
+        if ingredient_name:
+            data["ingredientName_rel"] = IngredientName.query.filter_by(name=ingredient_name).first() or IngredientName(name=ingredient_name)
+        ingredient_unit = data.get("unit", None) 
+        if ingredient_unit:
+            data["ingredientUnit_rel"] = IngredientUnit.query.filter_by(name=ingredient_unit).first() or IngredientUnit(name=ingredient_unit)
+        return data
+
+
+            
+
+                
 
 class jSendIngredientSchema(jSendSchema):
     data = fields.Nested('IngredientSchema', many=False,

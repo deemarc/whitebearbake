@@ -17,6 +17,7 @@ class masqlapi():
     def get(self, **kwargs):
         """ Get record for a given resource """
         try:
+            current_app.logger.debug(f'kwargs:{kwargs}')
             obj = self.resource.query.filter_by(**kwargs).first()
         except ValueError as err:
             current_app.logger.error(err)
@@ -59,7 +60,12 @@ class masqlapi():
             return {'message': 'Bad request', 'status_code': 400, 'status': 'failure', 'data': 'JSON input object is missing or cannot be parsed'}
         
         try:
-            data = self.rwschema().load(json, instance=obj, partial=True)
+            # data = self.rwschema().load(json, instance=obj, partial=True)
+            data = self.rwschema().dump(obj)
+            patch_data = self.rwschema().load(json, partial=True)
+            data.update(patch_data)
+
+            current_app.logger.debug(f"data for patching:{data}")
         except ValidationError as error:
             errMsg = {
                 "errorType":"Schema Load ValidationError",

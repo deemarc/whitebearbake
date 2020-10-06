@@ -26,7 +26,7 @@ def get_ingredient_resource():
     Get list of ingredient that meet with query filter given in paramters
     ---
     get:
-        description: Parameters can be provided in the query to search for ingredient name
+        description: Parameters can be provided in the query to search for ingredient
         operationId: get_ingredient
         tags:
          - ingredient
@@ -40,6 +40,12 @@ def get_ingredient_resource():
           - name: name
             in: query
             description: ingredient's Name
+            required: false
+            schema:
+              type: string
+          - name: unit
+            in: query
+            description: ingredient's Unit
             required: false
             schema:
               type: string
@@ -100,13 +106,13 @@ def post_ingredient_resource():
               
 
     """
-    return apiHandle.post(["name","unit"])
+    return apiHandle.post(["ingredientName_rel","ingredientUnit_rel"])
         
 @bp.route('/ingredients/<id>', methods=['GET'])
 @jSend
-def get_single_ingredient_resource(name):
+def get_single_ingredient_resource(id):
     """
-    Get specific ingredient by the name
+    Get specific ingredient by the id
     ---
     get:
         description: Get specific ingredient
@@ -114,9 +120,9 @@ def get_single_ingredient_resource(name):
         tags:
          - ingredient
         parameters:
-          - name: name
+          - name: id
             in: path
-            description: ingredient's Name
+            description: ingredient's id
             required: true
             schema:
               type: string
@@ -136,14 +142,14 @@ def get_single_ingredient_resource(name):
                 description: Internal Server Error
 
     """
-    obj = apiHandle.get(name=name) or abort(404)
+    obj = apiHandle.get(id=id) or abort(404)
     return apiHandle.getMethod(obj)
 
 @bp.route('/ingredients/<id>', methods=['PATCH'])
 @jSend
-def patch_single_ingredient_resource(name):
+def patch_single_ingredient_resource(id):
     """
-    Modifies specific ingredient by the name
+    Modifies specific ingredient by the id
     ---
     patch:
         description: Modifies specific ingredient
@@ -151,9 +157,9 @@ def patch_single_ingredient_resource(name):
         tags:
          - ingredient
         parameters:
-          - name: name
+          - name: id
             in: path
-            description: ingredient's Name
+            description: ingredient's id
             required: true
             schema:
               type: string
@@ -179,14 +185,14 @@ def patch_single_ingredient_resource(name):
                 description: Internal Server Error
 
     """
-    obj = apiHandle.get(name=name) or abort(404)
+    obj = apiHandle.get(id=id) or abort(404)
     return apiHandle.patch(obj)
 
 @bp.route('/ingredients/<id>', methods=['DELETE'])
 @jSend
-def delete_single_ingredient_resource(name):
+def delete_single_ingredient_resource(id):
     """
-    delete specific ingredient by the name
+    delete specific ingredient by the id
     ---
     delete:
         description: Delete specific ingredient
@@ -194,9 +200,9 @@ def delete_single_ingredient_resource(name):
         tags:
          - ingredient
         parameters:
-          - name: name
+          - name: id
             in: path
-            description: ingredient's Name
+            description: ingredient's id
             required: true
             schema:
               type: string
@@ -211,7 +217,7 @@ def delete_single_ingredient_resource(name):
                 description: Internal Server Error
 
     """
-    obj = apiHandle.get(name=name) or abort(404)
+    obj = apiHandle.get(id=id) or abort(404)
     return apiHandle.delete(obj)
 
 

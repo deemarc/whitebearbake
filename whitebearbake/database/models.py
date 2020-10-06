@@ -53,8 +53,8 @@ class Ingredient(db.Model):
     unit_id = db.Column(db.Integer, db.ForeignKey('ingredientunit.id'),nullable=False)
     ingredientName_rel = db.relationship('IngredientName')
     ingredientUnit_rel = db.relationship('IngredientUnit')
-    name = association_proxy('ingredientName_rel','name', creator=lambda name: IngredientName.query.filter_by(name=name).first() or IngredientName(name=name))
-    unit = association_proxy('ingredientUnit_rel','name', creator=lambda name: IngredientUnit.query.filter_by(name=name).first() or IngredientUnit(name=name))
+    name = association_proxy('ingredientName_rel','name', creator=lambda name: IngredientName.query.filter_by(name=name).first())
+    unit = association_proxy('ingredientUnit_rel','name', creator=lambda name: IngredientUnit.query.filter_by(name=name).first())
     description = db.String(200)
     # keyword = association_proxy('kw', 'keyword')
 class RecpImage(db.Model):
