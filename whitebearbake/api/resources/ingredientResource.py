@@ -106,7 +106,7 @@ def post_ingredient_resource():
               
 
     """
-    return apiHandle.post(["ingredientName_rel","ingredientUnit_rel"])
+    return apiHandle.post(["name","unit","name_id","unit_id"])
         
 @bp.route('/ingredients/<id>', methods=['GET'])
 @jSend
@@ -185,7 +185,10 @@ def patch_single_ingredient_resource(id):
                 description: Internal Server Error
 
     """
+    
     obj = apiHandle.get(id=id) or abort(404)
+    # sadly we cannot use our developed 
+
     return apiHandle.patch(obj)
 
 @bp.route('/ingredients/<id>', methods=['DELETE'])

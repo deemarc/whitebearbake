@@ -102,7 +102,7 @@ def post_component_resource():
         
 @bp.route('/components/<id>', methods=['GET'])
 @jSend
-def get_single_component_resource(name):
+def get_single_component_resource(id):
     """
     Get specific component by the id
     ---
@@ -133,7 +133,7 @@ def get_single_component_resource(name):
             500:
                 description: Internal Server Error
     """
-    obj = apiHandle.get(name=name) or abort(404)
+    obj = apiHandle.get(id=id) or abort(404)
     return apiHandle.getMethod(obj)
 
 @bp.route('/components/<id>', methods=['PATCH'])

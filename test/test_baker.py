@@ -6,13 +6,14 @@ from flask_sqlalchemy import SQLAlchemy
 from whitebearbake import create_app
 from whitebearbake.database.models import *
 from whitebearbake.database.models import db
+from whitebearbake.api.schemas import IngredientSchemaPOST
 
 # from database.models import *
 # from models import setup_db, Question, Category
 # from whitebearbake.models import db 
 
 
-class IngredientTestCase(unittest.TestCase):
+class BakerTestCase(unittest.TestCase):
     """This class represents the trivia test case"""
 
     def setUp(self):
@@ -27,7 +28,6 @@ class IngredientTestCase(unittest.TestCase):
         # binds the app to the current context
         with self.app.app_context():
             self.db = db
-            # self.db.create_all()
             
             # create all tables
             # self.db.create_all()
@@ -40,26 +40,26 @@ class IngredientTestCase(unittest.TestCase):
     """
     Testing ingredinetName endpoint
     """
-    def test_get_ingredient(self):
+    def test_get_baker(self):
         # print("****** runtest test_get_questions")
         """Tests getting ingredient"""
 
         # get response and load data
-        response = self.client().get(self.apiRoot + '/ingredients')
+        response = self.client().get(self.apiRoot + '/bakers')
         data = json.loads(response.data)
 
         # check status code and message
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['status'], 'success')
 
-    def test_post_ingredient_no_data(self):
-        response = self.client().post(self.apiRoot + '/ingredients')
+    def test_post_baker_no_data(self):
+        response = self.client().post(self.apiRoot + '/bakers')
 
         # check status code and message
         self.assertEqual(response.status_code, 400)
 
-    def test_get_ingredient_not_found(self):
-        response = self.client().post(self.apiRoot + '/ingredients/0')
+    def test_get_baker_not_found(self):
+        response = self.client().post(self.apiRoot + '/bakers/0')
 
         # check status code and message
         self.assertEqual(response.status_code, 404)
@@ -67,45 +67,38 @@ class IngredientTestCase(unittest.TestCase):
     def test_crud_ingredinet(self):
         """ Test whole sequence post patch delete ingredient
         and use get to verfy each step """
-        postName = "testName"
-        patchName = "testPatchName"
-        postUnit = "testUnit"
-        patchUnit = "testPatchUnit"
-
+        baker_name = 'whitebearbake'   
+        baker_patch_name = 'whitebearbakebake'        
         data = {}
-        data["name"] = postName
-        data["unit"] = postUnit
-
-        response = self.client().post(self.apiRoot + '/ingredients', json=data)
+        data["name"] = baker_name
+        response = self.client().post(self.apiRoot + '/bakers', json=data)
         data = json.loads(response.data)
         self.assertIn(response.status_code,[200,201])
         itemId = (data['data']).get('id',0)
 
         # === get id to see if its exist ===
-        response = self.client().get(self.apiRoot + '/ingredients/' + f'{itemId}')
+        response = self.client().get(self.apiRoot + '/bakers/' + f'{itemId}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['status'], 'success')
-        self.assertEqual((data['data']).get('name','inValid'),postName)
-        self.assertEqual((data['data']).get('unit','inValid'),postUnit)
+        self.assertEqual((data['data']).get('name','inValid'),baker_name)
 
         # === patch ingredient ===
         data = {}
-        data['name'] = patchName
-        data['unit'] = patchUnit
-        # fullUrl = self.apiRoot + '/ingredients/'+ f'{postName}'
+        data["name"] = baker_patch_name
+
+        # fullUrl = self.apiRoot + '/bakers/'+ f'{postName}'
         # self.app.logger.debug(f"fullUrl:{fullUrl}")
-        response = self.client().patch(self.apiRoot + '/ingredients/' + f'{itemId}', json=data)
+        response = self.client().patch(self.apiRoot + '/bakers/' + f'{itemId}', json=data)
         data = json.loads(response.data)
         # response = self.client().patch(fullUrl,data)
         self.app.logger.debug(f"reponse:{data}")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['status'], 'success')
         # verify that new name is updated in the database
-        self.assertEqual((data['data']).get('name','inValid'),patchName)
-        self.assertEqual((data['data']).get('unit','inValid'),patchUnit)
+        self.assertEqual((data['data']).get('name','inValid'),baker_patch_name)
 
         # === delete ingredient ===
-        response = self.client().delete(self.apiRoot + '/ingredients/' + f'{itemId}')
+        response = self.client().delete(self.apiRoot + '/bakers/' + f'{itemId}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['status'], 'success')
         

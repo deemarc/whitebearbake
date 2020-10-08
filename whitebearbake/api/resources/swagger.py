@@ -116,13 +116,13 @@ def swagger():
     spec.components.schema("Baker", schema=BakerSchema)
     spec.components.schema("BakerSchemaPOST", schema=BakerSchemaPOST)
     spec.components.schema("jSendBaker", schema=jSendBakerSchema)
-    spec.components.schema("jSendBakers", schema=jSendComponentsSchema)
+    spec.components.schema("jSendBakers", schema=jSendBakersSchema)
 
     # Recipe
     spec.components.schema("Recipe", schema=RecipeSchema)
     spec.components.schema("RecipeSchemaPOST", schema=RecipeSchemaPOST)
     spec.components.schema("jSendRecipe", schema=jSendRecipeSchema)
-    spec.components.schema("jSendRecipes", schema=jSendComponentsSchema)
+    spec.components.schema("jSendRecipes", schema=jSendRecipesSchema)
 
     # RecipeImage
     spec.components.schema("RecpImage", schema=RecpImageSchema)

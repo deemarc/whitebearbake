@@ -19,7 +19,7 @@ from whitebearbake.database.models import RecpImage
 
 apiHandle = masqlapi(db.session, RecpImage ,RecpImageSchema, RecpImageSchemaPOST)
 
-@bp.route('/recpimagess', methods=['GET'])
+@bp.route('/recpimages', methods=['GET'])
 @jSend
 def get_recpImage_resource():
     """
@@ -29,7 +29,7 @@ def get_recpImage_resource():
         description: Parameters can be provided in the query to search for recpImages 
         operationId: get_recpImage
         tags:
-         - recpImages
+         - recpImage
         parameters:
           - name: id
             in: query
@@ -37,9 +37,9 @@ def get_recpImage_resource():
             description: recpImages resource identifier
             schema:
               type: int
-          - name: name
+          - name: image_link
             in: query
-            description: recpImages's Name
+            description: recpImages's image_link
             required: false
             schema:
               type: string
@@ -98,11 +98,11 @@ def post_recpImage_resource():
                 $ref: "#/components/schemas/RecpImageSchemaPOST"
               
     """
-    return apiHandle.post("name")
+    return apiHandle.post("image_link")
         
 @bp.route('/recpimages/<id>', methods=['GET'])
 @jSend
-def get_single_recpImage_resource(name):
+def get_single_recpImage_resource(id):
     """
     Get specific RecpImage by the id
     ---
@@ -117,7 +117,7 @@ def get_single_recpImage_resource(name):
             description: RecpImage's id
             required: true
             schema:
-              type: int
+              type: string
             
         responses:
             200:
@@ -133,7 +133,7 @@ def get_single_recpImage_resource(name):
             500:
                 description: Internal Server Error
     """
-    obj = apiHandle.get(name=name) or abort(404)
+    obj = apiHandle.get(id=id) or abort(404)
     return apiHandle.getMethod(obj)
 
 @bp.route('/recpimages/<id>', methods=['PATCH'])
@@ -153,7 +153,7 @@ def patch_single_recpImage_resource(id):
             description: RecpImage's id
             required: true
             schema:
-              type: int
+              type: string
         requestBody:
           description: Action payload
           required: true

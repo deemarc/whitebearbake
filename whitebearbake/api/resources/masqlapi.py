@@ -60,12 +60,19 @@ class masqlapi():
             return {'message': 'Bad request', 'status_code': 400, 'status': 'failure', 'data': 'JSON input object is missing or cannot be parsed'}
         
         try:
-            # data = self.rwschema().load(json, instance=obj, partial=True)
-            data = self.rwschema().dump(obj)
-            patch_data = self.rwschema().load(json, partial=True)
-            data.update(patch_data)
-
-            current_app.logger.debug(f"data for patching:{data}")
+            data = self.rwschema().load(json, instance=obj, partial=True)
+            # data = self.rwschema().dump(obj)
+            # data_id = data.pop('id',None)
+            # data = {k: v for k, v in data.items() if v is not None}
+            # data = self.rwschema().load(data)
+            
+            
+            # current_app.logger.debug(f"data before patching:{data}")
+            # patch_data = self.rwschema().load(json, partial=True)
+            # data.update(patch_data)
+            # if data_id:
+            #     data['id'] = data_id
+            # current_app.logger.debug(f"data for patching:{data}")
         except ValidationError as error:
             errMsg = {
                 "errorType":"Schema Load ValidationError",
@@ -79,6 +86,7 @@ class masqlapi():
         try:
             for key, value in data.items():
                 setattr(obj,key, value)
+            current_app.logger.debug(f"obj before patch:{obj.__dict__}")
             self.session.add(obj)
             self.session.commit()
             data = self.roschema().dump(obj)
@@ -133,7 +141,8 @@ class masqlapi():
             
         query = {}
         for keys in uniqueField_list:
-            query[keys] = data[keys]
+            if keys in data:
+                query[keys] = data[keys]
         # Check for existing row based on passed JSON
         current_app.logger.info(f"query data in post function:{query}")
         existing = self.resource.query.filter_by(**query).first()

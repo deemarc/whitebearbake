@@ -102,7 +102,7 @@ def post_baker_resource():
         
 @bp.route('/bakers/<id>', methods=['GET'])
 @jSend
-def get_single_baker_resource(name):
+def get_single_baker_resource(id):
     """
     Get specific baker by the id
     ---
@@ -133,7 +133,7 @@ def get_single_baker_resource(name):
             500:
                 description: Internal Server Error
     """
-    obj = apiHandle.get(name=name) or abort(404)
+    obj = apiHandle.get(id=id) or abort(404)
     return apiHandle.getMethod(obj)
 
 @bp.route('/bakers/<id>', methods=['PATCH'])

@@ -5,13 +5,13 @@ from sqlalchemy.ext.associationproxy import association_proxy
 
 
 Component_Ingredient = db.Table('Component_Ingredient',
-    db.Column('component_id', db.Integer, db.ForeignKey('component.id'), primary_key=True),
-    db.Column('ingredient_id', db.Integer, db.ForeignKey('ingredient.id'), primary_key=True)
+    db.Column('component_id', db.Integer, db.ForeignKey('component.id',ondelete='cascade'), primary_key=True),
+    db.Column('ingredient_id', db.Integer, db.ForeignKey('ingredient.id',ondelete='cascade'), primary_key=True)
 )
 
 Recipe_Component = db.Table('Recipe_Component',
-    db.Column('recipe_id', db.Integer, db.ForeignKey('recipe.id'), primary_key=True),
-    db.Column('component_id', db.Integer, db.ForeignKey('component.id'), primary_key=True)
+    db.Column('recipe_id', db.Integer, db.ForeignKey('recipe.id',ondelete='cascade'), primary_key=True),
+    db.Column('component_id', db.Integer, db.ForeignKey('component.id',ondelete='cascade'), primary_key=True)
 )
 
 class Baker(db.Model):
@@ -33,7 +33,7 @@ class Component(db.Model):
     name = db.Column(db.String(200), unique=True,nullable=False)
     instuction_list = db.Column(db.ARRAY(db.String), default=[])
     ingredient_amount = db.Column(db.ARRAY(db.Integer), default=[])
-    ingredients = db.relationship('Ingredient', secondary=Component_Ingredient, lazy='joined')
+    ingredients = db.relationship('Ingredient', secondary=Component_Ingredient, lazy='joined', cascade="save-update, merge, delete")
     isRequire = db.Column(db.Boolean,default=True)
 
 class IngredientName(db.Model):
@@ -49,12 +49,12 @@ class IngredientUnit(db.Model):
 class Ingredient(db.Model):
     __tablename__ = 'ingredient'
     id = db.Column(db.Integer, primary_key=True)
-    name_id = db.Column(db.Integer, db.ForeignKey('ingredientname.id'),nullable=False)
-    unit_id = db.Column(db.Integer, db.ForeignKey('ingredientunit.id'),nullable=False)
-    ingredientName_rel = db.relationship('IngredientName')
-    ingredientUnit_rel = db.relationship('IngredientUnit')
-    name = association_proxy('ingredientName_rel','name', creator=lambda name: IngredientName.query.filter_by(name=name).first())
-    unit = association_proxy('ingredientUnit_rel','name', creator=lambda name: IngredientUnit.query.filter_by(name=name).first())
+    name_id = db.Column(db.Integer, db.ForeignKey('ingredientname.id',ondelete='cascade'),nullable=False)
+    unit_id = db.Column(db.Integer, db.ForeignKey('ingredientunit.id',ondelete='cascade'),nullable=False)
+    ingredientName_rel = db.relationship('IngredientName', cascade="save-update, merge, delete")
+    ingredientUnit_rel = db.relationship('IngredientUnit', cascade="save-update, merge, delete")
+    name = association_proxy('ingredientName_rel','name', creator=lambda name: IngredientName.query.filter_by(name=name).first() or IngredientName(name=name))
+    unit = association_proxy('ingredientUnit_rel','name', creator=lambda name: IngredientUnit.query.filter_by(name=name).first() or IngredientUnit(name=name))
     description = db.String(200)
     # keyword = association_proxy('kw', 'keyword')
 class RecpImage(db.Model):
@@ -78,7 +78,7 @@ class Recipe(db.Model):
     baker = db.relationship('Baker', backref="recipes")
     img_id = db.Column(db.Integer, db.ForeignKey("recpimage.id"))
     img = db.relationship('RecpImage',backref="recipe")
-    components = db.relationship('Component', secondary=Recipe_Component, lazy='joined')
+    components = db.relationship('Component', secondary=Recipe_Component, lazy='joined', cascade="save-update, merge, delete")
 
 
 

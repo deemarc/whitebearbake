@@ -128,13 +128,34 @@ class IngredientSchemaPOST(ma.SQLAlchemyAutoSchema):
 
     @post_load
     def get_name_unit(self, data, **kwags):
-        ingredient_name = data.get("name", None) 
+        ingredient_name = data.pop("name", None) 
         if ingredient_name:
-            data["ingredientName_rel"] = IngredientName.query.filter_by(name=ingredient_name).first() or IngredientName(name=ingredient_name)
-        ingredient_unit = data.get("unit", None) 
+            obj = IngredientName.query.filter_by(name=ingredient_name).first()
+            if obj:
+                data['name_id'] = obj.id
+            else:
+                data['name'] = ingredient_name
+        
+        ingredient_unit = data.pop("unit", None) 
         if ingredient_unit:
-            data["ingredientUnit_rel"] = IngredientUnit.query.filter_by(name=ingredient_unit).first() or IngredientUnit(name=ingredient_unit)
+            obj = IngredientUnit.query.filter_by(name=ingredient_unit).first()
+            if obj:
+                data['unit_id'] = obj.id
+            else:
+                data['unit'] = ingredient_unit
+          
         return data
+
+    # @post_dump
+    # def dump_name_unit(self, data, many, **kwargs):
+    #     ingredientName_rel = data.pop("ingredientName_rel", None)
+    #     if ingredientName_rel:
+    #         data["name"] = ingredientName_rel["name"]
+
+    #     ingredientUnit_rel = data.pop("ingredientUnit_rel", None)
+    #     if ingredientUnit_rel:
+    #         data["unit"] = ingredientUnit_rel["name"]
+    #     return data
 
 
             
@@ -151,6 +172,11 @@ class jSendIngredientsSchema(jSendSchema):
 
 # ======================== Component section ========================
 
+class ComponentSchemaNESTED(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Component
+        fields = ('name',)
+
 class ComponentSchema(ma.SQLAlchemyAutoSchema):
     ingredients = fields.Nested('IngredientSchemaNESTED', many=True)
     class Meta:
@@ -162,7 +188,14 @@ class ComponentSchemaPOST(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Component
         exclude = ('id',)
-        
+
+class ComponentLoadInstSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Component
+        sqla_session = db.session
+        fields = ('id',)
+        load_instance = True
+
 
 class jSendComponentSchema(jSendSchema):
     data = fields.Nested('ComponentSchema', many=False,
@@ -265,13 +298,15 @@ class RecpImageSchemaNESTED(ma.SQLAlchemyAutoSchema):
 
 class RecipeSchema(ma.SQLAlchemyAutoSchema):
     baker = fields.Nested('RecipeSchemaNESTED', many=False)
-    img = fields.Nested('IngredientSchema', many=False)
+    components =fields.Nested('ComponentSchemaNESTED', many=True) 
+    img = fields.Nested('RecpImageSchemaNESTED', many=False)
     class Meta:
         model = Recipe
         # fields = ('id','name','instuction_list','ingredient_amount','ingredients','isRequire')
 
 class RecipeSchemaPOST(ma.SQLAlchemyAutoSchema):
     baker = fields.Nested('BakerLoadInstSchema', many=False)
+    components =fields.Nested('ComponentLoadInstSchema', many=True) 
     img = fields.Nested('RecpImageLoadInstSchema', many=False)
     class Meta:
         model = Recipe

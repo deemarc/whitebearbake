@@ -12,7 +12,7 @@ from whitebearbake.database.models import db
 # from whitebearbake.models import db 
 
 
-class IngredientTestCase(unittest.TestCase):
+class RecpImagesTestCase(unittest.TestCase):
     """This class represents the trivia test case"""
 
     def setUp(self):
@@ -27,10 +27,20 @@ class IngredientTestCase(unittest.TestCase):
         # binds the app to the current context
         with self.app.app_context():
             self.db = db
-            # self.db.create_all()
-            
             # create all tables
             # self.db.create_all()
+
+            # add one recpImage
+            data = {}
+            image_link = "http://localhost/dummy.jpg"
+            data["image_link"] = image_link
+            obj = RecpImage.query.filter_by(image_link=image_link).first()
+            if not obj:
+                obj = RecpImage(**data)
+                db.session.add(obj)
+                db.session.commit()
+            
+            
     
     def tearDown(self):
         """Executed after reach test"""
@@ -38,75 +48,67 @@ class IngredientTestCase(unittest.TestCase):
         self.db.session.remove()
 
     """
-    Testing ingredinetName endpoint
+    Testing RecpImage endpoint
     """
-    def test_get_ingredient(self):
+    def test_get_recpimage(self):
         # print("****** runtest test_get_questions")
-        """Tests getting ingredient"""
+        """Tests getting recpimage"""
 
         # get response and load data
-        response = self.client().get(self.apiRoot + '/ingredients')
+        response = self.client().get(self.apiRoot + '/recpimages')
         data = json.loads(response.data)
 
         # check status code and message
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['status'], 'success')
 
-    def test_post_ingredient_no_data(self):
-        response = self.client().post(self.apiRoot + '/ingredients')
+    def test_post_recpimage_no_data(self):
+        response = self.client().post(self.apiRoot + '/recpimages')
 
         # check status code and message
         self.assertEqual(response.status_code, 400)
 
-    def test_get_ingredient_not_found(self):
-        response = self.client().post(self.apiRoot + '/ingredients/0')
+    def test_get_recpimage_not_found(self):
+        response = self.client().post(self.apiRoot + '/recpimages/0')
 
         # check status code and message
         self.assertEqual(response.status_code, 404)
 
-    def test_crud_ingredinet(self):
-        """ Test whole sequence post patch delete ingredient
+    def test_crud_recpimage(self):
+        """ Test whole sequence post patch delete recpimage
         and use get to verfy each step """
-        postName = "testName"
-        patchName = "testPatchName"
-        postUnit = "testUnit"
-        patchUnit = "testPatchUnit"
-
+        image_link = "http://localhost/whitebearbake.jpg"
+        image_link_patch = "http://localhost/whitebearbakebake.jpg"       
         data = {}
-        data["name"] = postName
-        data["unit"] = postUnit
-
-        response = self.client().post(self.apiRoot + '/ingredients', json=data)
+        data["image_link"] = image_link
+        response = self.client().post(self.apiRoot + '/recpimages', json=data)
         data = json.loads(response.data)
-        self.app.logger.debug(f'response:{data}')
         self.assertIn(response.status_code,[200,201])
         itemId = (data['data']).get('id',0)
 
         # === get id to see if its exist ===
-        response = self.client().get(self.apiRoot + '/ingredients/' + f'{itemId}')
+        response = self.client().get(self.apiRoot + '/recpimages/' + f'{itemId}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['status'], 'success')
-        self.assertEqual((data['data']).get('name','inValid'),postName)
-        self.assertEqual((data['data']).get('unit','inValid'),postUnit)
+        self.assertEqual((data['data']).get('image_link','inValid'),image_link)
 
-        # === patch ingredient ===
+        # === patch recpimage ===
         data = {}
-        data['name'] = patchName
-        data['unit'] = patchUnit
-        # fullUrl = self.apiRoot + '/ingredients/'+ f'{postName}'
+        data["image_link"] = image_link_patch
+
+        # fullUrl = self.apiRoot + '/recpimages/'+ f'{postName}'
         # self.app.logger.debug(f"fullUrl:{fullUrl}")
-        response = self.client().patch(self.apiRoot + '/ingredients/' + f'{itemId}', json=data)
+        response = self.client().patch(self.apiRoot + '/recpimages/' + f'{itemId}', json=data)
         data = json.loads(response.data)
         # response = self.client().patch(fullUrl,data)
         self.app.logger.debug(f"reponse:{data}")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['status'], 'success')
         # verify that new name is updated in the database
-        self.assertEqual((data['data']).get('name','inValid'),patchName)
-        self.assertEqual((data['data']).get('unit','inValid'),patchUnit)
+        self.assertEqual((data['data']).get('image_link','inValid'),image_link_patch)
 
-        # === delete ingredient ===
-        response = self.client().delete(self.apiRoot + '/ingredients/' + f'{itemId}')
+        # === delete recpimage ===
+        response = self.client().delete(self.apiRoot + '/recpimages/' + f'{itemId}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['status'], 'success')
         

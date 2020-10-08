@@ -100,7 +100,7 @@ def post_recipe_resource():
         
 @bp.route('/recipes/<id>', methods=['GET'])
 @jSend
-def get_single_recipe_resource(name):
+def get_single_recipe_resource(id):
     """
     Get specific recipe by the id
     ---
@@ -115,7 +115,7 @@ def get_single_recipe_resource(name):
             description: recipe's id
             required: true
             schema:
-              type: int
+              type: string
             
         responses:
             200:
@@ -131,7 +131,7 @@ def get_single_recipe_resource(name):
             500:
                 description: Internal Server Error
     """
-    obj = apiHandle.get(name=name) or abort(404)
+    obj = apiHandle.get(id=id) or abort(404)
     return apiHandle.getMethod(obj)
 
 @bp.route('/recipes/<id>', methods=['PATCH'])
@@ -151,7 +151,7 @@ def patch_single_recipe_resource(id):
             description: recipe's id
             required: true
             schema:
-              type: int
+              type: string
         requestBody:
           description: Action payload
           required: true
