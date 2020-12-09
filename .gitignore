@@ -130,4 +130,4 @@ dmypy.json
 
 #static files
 */frontend/*
-*/static/*
+*/static/node_modules*
