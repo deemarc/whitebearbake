@@ -1,3 +1,4 @@
 graft whitebearbake/static
 graft whitebearbake/templates
+graft whitebearbake/frontend
 global-exclude *.pyc

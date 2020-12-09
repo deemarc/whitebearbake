@@ -8,6 +8,11 @@ def index():
     """ Index view """
     return render_template('index.html')
 
+@bp.route('/afunc', methods=['GET'])
+def afunc():
+    """ Index view """
+    return render_template('base.html')
+
 @bp.route('/doc', methods=['GET'])
 def swagger_doc():
     """ Index view """
